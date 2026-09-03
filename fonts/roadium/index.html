@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JK Roadium — John Karlsson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="roadium.css">
+</head>
+<body>
+
+<header class="topNav">
+  <a class="navHome" id="navHome" href="/">
+    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5.33306 9.8594C5.05086 10.1402 4.59459 10.1397 4.31306 9.85816L0.707107 6.25221C0.316583 5.86168 0.316583 5.22852 0.707107 4.83799L4.31534 1.22976C4.5958 0.949297 5.05019 0.948189 5.33202 1.22729C5.6158 1.50831 5.61692 1.96653 5.33451 2.24894L2.77912 4.80433H12.4908C12.8999 4.80433 13.2315 5.13599 13.2315 5.5451C13.2315 5.95421 12.8999 6.28587 12.4908 6.28587H2.77912L5.33389 8.8365C5.61678 9.11893 5.61641 9.57743 5.33306 9.8594Z" fill="currentColor"/>
+    </svg>
+    Home
+  </a>
+
+  <div class="fontSwitcher" id="fontSwitcher">
+    <!-- .fontSwitcherSurface is the actual visual/animated shape -- see the
+         stylesheet comment on .fontSwitcher for why it's a separate,
+         absolutely-positioned element from its parent. -->
+    <div class="fontSwitcherSurface">
+      <button class="fontSwitcherTrigger" id="fontSwitcherTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="fontGlyph">R</span>
+        <span class="fontSwitcherLabel">
+          <span class="fontSwitcherTitle">JK Roadium</span>
+          <span class="fontSwitcherCaption">Display</span>
+        </span>
+        <span class="fontSwitcherChevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </span>
+      </button>
+
+      <div class="fontSwitcherDivider"></div>
+      <div class="fontSwitcherComingSoon">
+        <span class="fontSwitcherCaption">More fonts soon</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="introSection" class="section">
+
+  <div class="introContent">
+  <div class="introTitle">
+    <svg viewBox="0 0 632 171" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g id="flag">
+        <path d="M14.8828 108H0.375V93.5537H14.8828V108ZM43.8203 108H29.3125V93.5537H14.8828V79.1074H29.3125V64.5996H43.8203V79.1074H29.3291V93.5537H43.8203V108ZM72.7656 79.1074H58.2666V93.5537H72.7656V108H58.2578V93.5537H43.8203V79.1074H58.2578V64.5996H72.7656V79.1074ZM101.658 108H87.2119V93.5537H101.658V108ZM87.2119 93.5537H72.7656V79.1074H87.2119V93.5537ZM14.8828 79.1074H0.375V64.5996H14.8828V79.1074ZM101.658 79.1074H87.2119V64.5996H101.658V79.1074Z" fill="white" fill-opacity="0.25"/>
+      </g>
+      <g id="glyph_R">
+        <path d="M137.9 117H119V72.9C119 62.46 127.46 54 137.9 54H177.23C188.57 54 197.75 63.18 197.75 74.43C197.75 85.77 188.57 94.95 177.23 94.95H161.48C160.67 94.95 159.95 95.67 159.95 96.48C159.95 97.38 160.67 98.1 161.48 98.1H197.75V117H161.48C150.23 117 141.05 107.82 141.05 96.48C141.05 85.23 150.23 76.05 161.48 76.05H177.23C178.13 76.05 178.85 75.33 178.85 74.43C178.85 73.62 178.13 72.9 177.23 72.9H137.9V117Z" fill="white"/>
+      </g>
+      <g id="glyph_O">
+        <path d="M261.03 117H220.08C209.64 117 201.18 108.54 201.18 98.1V72.9C201.18 62.46 209.64 54 220.08 54H261.03C271.47 54 279.93 62.46 279.93 72.9V98.1C279.93 108.54 271.47 117 261.03 117ZM220.08 72.9V98.1H261.03V72.9H220.08Z" fill="white"/>
+      </g>
+      <g id="glyph_A">
+        <path d="M340.052 54L325.652 54C319.982 54 314.672 56.52 311.072 60.93L287.672 89.55C284.882 92.88 283.352 97.11 283.352 101.43L283.352 117L302.252 117L302.252 101.43L325.652 72.9L340.052 72.9L340.052 117L358.952 117L358.952 72.9C358.952 62.46 350.492 54 340.052 54Z" fill="white"/>
+      </g>
+      <g id="glyph_D">
+        <path d="M420.067 117H363.367V54H420.067C430.507 54 438.967 62.46 438.967 72.9V98.1C438.967 108.54 430.507 117 420.067 117ZM382.267 72V98.1H420.067V72H382.267Z" fill="white"/>
+      </g>
+      <g id="glyph_I">
+        <path d="M461.634 117H442.734V54H461.634V117Z" fill="white"/>
+      </g>
+      <g id="glyph_U">
+        <path d="M523.044 117H485.244C474.894 117 466.344 108.54 466.344 98.1V54H485.244V98.1H523.044V54H541.944V98.1C541.944 108.54 533.484 117 523.044 117Z" fill="white"/>
+      </g>
+      <g id="glyph_M">
+        <path d="M564.259 117H545.359V74.43C545.359 63.18 554.539 54 565.879 54C577.129 54 586.309 63.18 586.309 74.43V96.48C586.309 97.38 587.029 98.1 587.929 98.1C588.739 98.1 589.459 97.38 589.459 96.48V74.43C589.459 63.18 598.639 54 609.979 54C621.229 54 630.409 63.18 630.409 74.43V117H611.509V74.43C611.509 73.62 610.789 72.9 609.979 72.9C609.079 72.9 608.359 73.62 608.359 74.43V96.57C608.359 107.82 599.179 117 587.929 117C576.589 117 567.409 107.82 567.409 96.57V74.43C567.409 73.62 566.689 72.9 565.879 72.9C564.979 72.9 564.259 73.62 564.259 74.43V117Z" fill="white"/>
+      </g>
+    </svg>
+    <img class="introTitleChrome" src="assets/jk-chrome.png" alt="">
+  </div>
+
+  <p class="introDescription">A futuristic display typeface inspired by Y2K video games, intergalactic racing leagues, and… marbles. Free for personal and commercial use.</p>
+
+  <div class="introCtas">
+    <a class="ctaPrimary" href="#downloadSection">Get the Font</a>
+  </div>
+
+  </div>
+
+</section>
+
+<section id="wordsSection" class="section">
+
+  <div class="divider">
+    <div class="dividerLine"></div>
+    <div class="dividerPill">
+      <span class="dividerDot"></span>
+      <span class="dividerLabel">72pt</span>
+    </div>
+  </div>
+
+  <div class="wordsList" style="--pt: 72;">
+    <div class="wordsBase">
+      <div class="wordLine">LOREM IPSUM</div>
+      <div class="wordLine">(×2) ROBOTICS</div>
+      <div class="wordLine">TURBO DRIVE</div>
+      <div class="wordLine">MID™ VELOCITY</div>
+      <div class="wordLine">TWIN PROJECT</div>
+      <div class="wordLine">DÍÄCR̂ITIC̄Š</div>
+      <div class="wordLine">QUALITY*</div>
+      <div class="wordLine">867-5309</div>
+    </div>
+    <div class="wordsReveal" aria-hidden="true">
+      <div class="wordLine">LOREM IPSUM</div>
+      <div class="wordLine">(×2) ROBOTICS</div>
+      <div class="wordLine">TURBO DRIVE</div>
+      <div class="wordLine">MID™ VELOCITY</div>
+      <div class="wordLine">TWIN PROJECT</div>
+      <div class="wordLine">DÍÄCR̂ITIC̄Š</div>
+      <div class="wordLine">QUALITY*</div>
+      <div class="wordLine">867-5309</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="dividerLine"></div>
+    <div class="dividerPill">
+      <span class="dividerDot"></span>
+      <span class="dividerLabel">120pt</span>
+    </div>
+  </div>
+
+  <div class="wordsList" style="--pt: 120;">
+    <div class="wordsBase">
+      <div class="wordLine">XYZ©</div>
+      <div class="wordLine">TURISMO</div>
+      <div class="wordLine">MAINFR.</div>
+    </div>
+    <div class="wordsReveal" aria-hidden="true">
+      <div class="wordLine">XYZ©</div>
+      <div class="wordLine">TURISMO</div>
+      <div class="wordLine">MAINFR.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="dividerLine"></div>
+    <div class="dividerPill">
+      <span class="dividerDot"></span>
+      <span class="dividerLabel">160pt</span>
+    </div>
+  </div>
+
+  <div class="wordsList" style="--pt: 160;">
+    <div class="wordsBase">
+      <div class="wordLine">X1 ‘26</div>
+      <div class="wordLine">TRUCK</div>
+    </div>
+    <div class="wordsReveal" aria-hidden="true">
+      <div class="wordLine">X1 ‘26</div>
+      <div class="wordLine">TRUCK</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="dividerLine"></div>
+    <div class="dividerPill">
+      <span class="dividerDot"></span>
+      <span class="dividerLabel">32pt</span>
+    </div>
+  </div>
+
+  <div class="wordsList" id="wordsGroup32" style="--pt: 32;">
+    <div class="wordsBase">
+      <div class="wordLine">THIS TYPEFACE WAS</div>
+      <div class="wordLine">ORIGINALLY DESIGNED FOR</div>
+      <div class="wordLine">MY SIDE PROJECT <svg class="mrblsLogo" viewBox="0 0 234 69" xmlns="http://www.w3.org/2000/svg"><path d="M199.968 0C218.761 0.000115457 233.996 15.2358 233.996 34.0293C233.996 52.8226 218.761 68.0575 199.968 68.0576H34.0254C15.232 68.0576 -0.00369906 52.8227 -0.00390625 34.0293C-0.00390625 15.2357 15.2318 0 34.0254 0H199.968ZM34.0254 7.98242C19.6402 7.98242 7.97852 19.6441 7.97852 34.0293C7.97872 48.4143 19.6403 60.0752 34.0254 60.0752H199.968C214.353 60.0751 226.014 48.4142 226.015 34.0293C226.015 19.6442 214.353 7.98254 199.968 7.98242H34.0254ZM60.7422 20.4248C65.7339 20.4249 69.7949 24.5327 69.7949 29.582V48.2275H61.2773V29.582C61.2773 29.2837 61.0371 29.0402 60.7422 29.04H60.708C60.413 29.0401 60.1729 29.2837 60.1729 29.582V39.2754C60.1728 44.3248 56.1113 48.4326 51.1191 48.4326H50.9893C45.9973 48.4325 41.9365 44.3247 41.9365 39.2754V29.582C41.9365 29.2838 41.6965 29.0403 41.4014 29.04C41.1064 29.04 40.8662 29.2836 40.8662 29.582V48.2275H32.3477V29.582C32.3477 24.5326 36.4095 20.4248 41.4014 20.4248C46.3933 20.425 50.4541 24.5327 50.4541 29.582V39.2754C50.4541 39.574 50.6941 39.8163 50.9893 39.8164H51.1191C51.4144 39.8164 51.6553 39.5741 51.6553 39.2754V29.582C51.6553 24.5326 55.7162 20.4249 60.708 20.4248H60.7422ZM149.507 39.8506H167.367V48.1885H144.286C142.313 48.1885 140.714 46.5704 140.714 44.5752V20.3955H149.507V39.8506ZM200.285 29.0107H176.002C175.68 29.0109 175.418 29.2768 175.418 29.6025V29.7393C175.418 30.065 175.68 30.33 176.002 30.3301H193.243C198.111 30.3301 202.071 34.3363 202.071 39.2598C202.071 44.1831 198.111 48.1885 193.243 48.1885H168.615V39.8506H193.243C193.565 39.8506 193.828 39.5855 193.828 39.2598C193.828 38.9339 193.565 38.668 193.243 38.668H176.002C171.135 38.6678 167.175 34.6629 167.175 29.7393V29.6025C167.175 24.6789 171.135 20.673 176.002 20.6729H200.285V29.0107ZM96.916 20.3486C101.796 20.3486 105.767 24.3645 105.767 29.3008V29.5371C105.767 34.4731 101.796 38.4893 96.916 38.4893H89.7256C89.391 38.4894 89.1184 38.7651 89.1182 39.1035C89.1182 39.4422 89.3908 39.7186 89.7256 39.7188H105.767V48.0566H89.7256C84.8454 48.0565 80.875 44.0397 80.875 39.1035C80.8753 34.1675 84.8456 30.1515 89.7256 30.1514H96.916C97.2509 30.1514 97.5234 29.8755 97.5234 29.5371V29.3008C97.5234 28.962 97.2509 28.6865 96.916 28.6865H79.3428V48.0986H71.0996V27.8525C71.0996 23.7148 74.4278 20.3486 78.5186 20.3486H96.916ZM129.339 20.3057C134.126 20.3057 138.238 24.2647 138.249 29.1064C138.252 30.5898 137.892 31.9894 137.253 33.2188C138.936 34.9561 139.913 37.3934 139.706 40.041C139.348 44.6233 135.449 48.0986 130.904 48.0986H106.999V23.6406C106.999 21.7987 108.476 20.3057 110.297 20.3057H129.339ZM115.469 39.6162H131.127C131.506 39.6162 131.813 39.3049 131.813 38.9209C131.813 38.5374 131.506 38.2266 131.127 38.2266H115.469V39.6162ZM115.469 30.2148H129.642C130.021 30.2148 130.328 29.9035 130.328 29.5195C130.328 29.1362 130.021 28.8252 129.642 28.8252H115.469V30.2148Z" fill="white"/></svg>.</div>
+    </div>
+    <div class="wordsReveal" aria-hidden="true">
+      <div class="wordLine">THIS TYPEFACE WAS</div>
+      <div class="wordLine">ORIGINALLY DESIGNED FOR</div>
+      <div class="wordLine">MY SIDE PROJECT <svg class="mrblsLogo" viewBox="0 0 234 69" xmlns="http://www.w3.org/2000/svg"><path d="M199.968 0C218.761 0.000115457 233.996 15.2358 233.996 34.0293C233.996 52.8226 218.761 68.0575 199.968 68.0576H34.0254C15.232 68.0576 -0.00369906 52.8227 -0.00390625 34.0293C-0.00390625 15.2357 15.2318 0 34.0254 0H199.968ZM34.0254 7.98242C19.6402 7.98242 7.97852 19.6441 7.97852 34.0293C7.97872 48.4143 19.6403 60.0752 34.0254 60.0752H199.968C214.353 60.0751 226.014 48.4142 226.015 34.0293C226.015 19.6442 214.353 7.98254 199.968 7.98242H34.0254ZM60.7422 20.4248C65.7339 20.4249 69.7949 24.5327 69.7949 29.582V48.2275H61.2773V29.582C61.2773 29.2837 61.0371 29.0402 60.7422 29.04H60.708C60.413 29.0401 60.1729 29.2837 60.1729 29.582V39.2754C60.1728 44.3248 56.1113 48.4326 51.1191 48.4326H50.9893C45.9973 48.4325 41.9365 44.3247 41.9365 39.2754V29.582C41.9365 29.2838 41.6965 29.0403 41.4014 29.04C41.1064 29.04 40.8662 29.2836 40.8662 29.582V48.2275H32.3477V29.582C32.3477 24.5326 36.4095 20.4248 41.4014 20.4248C46.3933 20.425 50.4541 24.5327 50.4541 29.582V39.2754C50.4541 39.574 50.6941 39.8163 50.9893 39.8164H51.1191C51.4144 39.8164 51.6553 39.5741 51.6553 39.2754V29.582C51.6553 24.5326 55.7162 20.4249 60.708 20.4248H60.7422ZM149.507 39.8506H167.367V48.1885H144.286C142.313 48.1885 140.714 46.5704 140.714 44.5752V20.3955H149.507V39.8506ZM200.285 29.0107H176.002C175.68 29.0109 175.418 29.2768 175.418 29.6025V29.7393C175.418 30.065 175.68 30.33 176.002 30.3301H193.243C198.111 30.3301 202.071 34.3363 202.071 39.2598C202.071 44.1831 198.111 48.1885 193.243 48.1885H168.615V39.8506H193.243C193.565 39.8506 193.828 39.5855 193.828 39.2598C193.828 38.9339 193.565 38.668 193.243 38.668H176.002C171.135 38.6678 167.175 34.6629 167.175 29.7393V29.6025C167.175 24.6789 171.135 20.673 176.002 20.6729H200.285V29.0107ZM96.916 20.3486C101.796 20.3486 105.767 24.3645 105.767 29.3008V29.5371C105.767 34.4731 101.796 38.4893 96.916 38.4893H89.7256C89.391 38.4894 89.1184 38.7651 89.1182 39.1035C89.1182 39.4422 89.3908 39.7186 89.7256 39.7188H105.767V48.0566H89.7256C84.8454 48.0565 80.875 44.0397 80.875 39.1035C80.8753 34.1675 84.8456 30.1515 89.7256 30.1514H96.916C97.2509 30.1514 97.5234 29.8755 97.5234 29.5371V29.3008C97.5234 28.962 97.2509 28.6865 96.916 28.6865H79.3428V48.0986H71.0996V27.8525C71.0996 23.7148 74.4278 20.3486 78.5186 20.3486H96.916ZM129.339 20.3057C134.126 20.3057 138.238 24.2647 138.249 29.1064C138.252 30.5898 137.892 31.9894 137.253 33.2188C138.936 34.9561 139.913 37.3934 139.706 40.041C139.348 44.6233 135.449 48.0986 130.904 48.0986H106.999V23.6406C106.999 21.7987 108.476 20.3057 110.297 20.3057H129.339ZM115.469 39.6162H131.127C131.506 39.6162 131.813 39.3049 131.813 38.9209C131.813 38.5374 131.506 38.2266 131.127 38.2266H115.469V39.6162ZM115.469 30.2148H129.642C130.021 30.2148 130.328 29.9035 130.328 29.5195C130.328 29.1362 130.021 28.8252 129.642 28.8252H115.469V30.2148Z" fill="white"/></svg>.</div>
+    </div>
+  </div>
+  <p class="wordsCaption">MRBLS™ is shelved indefinitely but I hope Roadium can find a new home in a future project, mine or yours. Let me know where it ends up!</p>
+
+  <div class="divider">
+    <div class="dividerLine"></div>
+    <div class="dividerPill">
+      <span class="dividerDot"></span>
+      <span class="dividerLabel">240pt</span>
+    </div>
+  </div>
+
+  <div class="wordsList" style="--pt: 240;">
+    <div class="wordsBase">
+      <div class="wordLine">RS2</div>
+    </div>
+    <div class="wordsReveal" aria-hidden="true">
+      <div class="wordLine">RS2</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="dividerLine"></div>
+    <div class="dividerPill">
+      <span class="dividerDot"></span>
+      <span class="dividerLabel">OpenType Features</span>
+    </div>
+  </div>
+
+  <div class="featureHero">
+    <p class="featureDescription">With cv04 (checkered #) active, # ## ### become…</p>
+    <p class="featureSample featureAlt-cv04"># ## ###</p>
+  </div>
+
+  <div class="featureGrid">
+    <div class="featureCell">
+      <p class="featureDescription">cv01 (simple A):</p>
+      <p class="featureSample featureAlt-cv01">RO<span class="featureHighlight">A</span>D</p>
+    </div>
+    <div class="featureCell">
+      <p class="featureDescription">cv02 (simple G):</p>
+      <p class="featureSample featureAlt-cv02"><span class="featureHighlight">G</span>RAVITY</p>
+    </div>
+    <div class="featureCell">
+      <p class="featureDescription">cv03 (simple N):</p>
+      <p class="featureSample featureAlt-cv03">MO<span class="featureHighlight">N</span>O</p>
+    </div>
+    <div class="featureCell">
+      <p class="featureDescription">slashed-zero:</p>
+      <p class="featureSample featureAlt-zero">3<span class="featureHighlight">000</span></p>
+    </div>
+  </div>
+
+</section>
+
+<section id="uiSampleSection" class="section">
+  <img src="assets/ui-sample.png" alt="JK Roadium used in a UI sample screen">
+  <span class="sampleLabel">Sample</span>
+</section>
+
+<section id="selectSampleSection" class="section">
+  <img src="assets/select-sample.jpg" alt="JK Roadium used in a country select screen">
+  <span class="sampleLabel">Sample</span>
+</section>
+
+<section id="daypassSampleSection" class="section">
+  <img src="assets/daypass-sample.jpg" alt="JK Roadium used in a day pass ticket screen">
+  <span class="sampleLabel">Sample</span>
+</section>
+
+<section id="gridVideoSection" class="section">
+  <video id="gridVideo" src="assets/jk-roadium-grid.mp4" autoplay loop muted playsinline></video>
+  <button id="gridPlayToggle" type="button" aria-label="Pause video"></button>
+</section>
+
+<section id="glyphSection" class="section">
+
+  <h2 class="glyphTitle">Glyph<br>Overview</h2>
+
+  <div class="filterRow">
+    <button class="filterPill selected" type="button" data-filter="upper">
+      <span class="filterDot" style="background: #415EFF;"></span>Uppercase
+    </button>
+    <button class="filterPill" type="button" data-filter="numPunct">
+      <span class="filterDot" style="background: #7A4EC7;"></span>Numerals & Punctuation
+    </button>
+    <button class="filterPill" type="button" data-filter="diacritics">
+      <span class="filterDot" style="background: #FF76BF;"></span>Diacritics
+    </button>
+    <button class="filterPill" type="button" data-filter="extras">
+      <span class="filterDot" style="background: #4EC1FF;"></span>Alternates
+    </button>
+  </div>
+
+  <div class="glyphGrid" id="glyphGrid"></div>
+
+</section>
+
+<section id="downloadSection" class="section">
+
+  <div id="cursorZone">
+  <div id="stage">
+    <canvas id="ringsCanvas"></canvas>
+    <img id="shadowBlur" src="assets/mrbl-blur.png" alt="">
+    <div id="canvasHost"></div>
+  </div>
+
+  <div id="titleOverlay">
+  <svg id="versionTitle" viewBox="0 0 621 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M621 49H573.006C569.016 49 565.656 45.71 565.656 41.65V7.35C565.656 3.29 569.016 0 573.006 0H621V14.7H580.356V17.15H621V31.85H580.356V34.3H621V49Z" fill="white"/>
+    <path d="M476.402 49H444.552C436.432 49 429.852 42.42 429.852 34.3V14.7C429.852 6.58 436.432 0 444.552 0H476.402C484.522 0 491.102 6.58 491.102 14.7V34.3C491.102 42.42 484.522 49 476.402 49ZM444.552 14.7V34.3H476.402V14.7H444.552Z" fill="white"/>
+    <path d="M352.161 49H337.461V7.35C337.461 3.29 340.751 0 344.811 0H358.951C362.871 0 366.581 1.54 369.311 4.27L382.191 17.15C384.991 19.95 386.461 23.59 386.461 27.51V33.04C386.461 33.74 387.021 34.3 387.721 34.3C388.421 34.3 388.911 33.74 388.911 33.04V0H403.611V33.04C403.611 41.86 396.541 49 387.721 49C378.901 49 371.761 41.86 371.761 33.04V27.51L358.951 14.7H352.161V49Z" fill="white"/>
+    <path d="M318.534 49H286.684C278.564 49 271.984 42.42 271.984 34.3V14.7C271.984 6.58 278.564 0 286.684 0H318.534C326.654 0 333.234 6.58 333.234 14.7V34.3C333.234 42.42 326.654 49 318.534 49ZM286.684 14.7V34.3H318.534V14.7H286.684Z" fill="white"/>
+    <path d="M266.77 49H252.07V0H266.77V49Z" fill="white"/>
+    <path d="M230.918 49H189.408V34.3H230.918C231.548 34.3 232.108 33.74 232.108 33.04C232.108 32.41 231.548 31.85 230.918 31.85H203.968C195.148 31.85 188.008 24.71 188.008 15.89C188.008 7.14 195.148 0 203.968 0H245.408V14.7H203.968C203.268 14.7 202.708 15.26 202.708 15.89C202.708 16.59 203.268 17.15 203.968 17.15H230.918C239.668 17.15 246.808 24.29 246.808 33.04C246.808 41.86 239.668 49 230.918 49Z" fill="white"/>
+    <path d="M137.575 49H122.875V14.7C122.875 6.58 129.455 0 137.575 0H168.165C176.985 0 184.125 7.14 184.125 15.89C184.125 24.71 176.985 31.85 168.165 31.85H155.915C155.285 31.85 154.725 32.41 154.725 33.04C154.725 33.74 155.285 34.3 155.915 34.3H194.125V49H155.915C147.165 49 140.025 41.86 140.025 33.04C140.025 24.29 147.165 17.15 155.915 17.15H168.165C168.865 17.15 169.425 16.59 169.425 15.89C169.425 15.26 168.865 14.7 168.165 14.7H137.575V49Z" fill="white"/>
+    <path d="M118.666 49H70.3656C66.3756 49 63.0156 45.71 63.0156 41.65V7.35C63.0156 3.29 66.3756 0 70.3656 0H118.666V14.7H77.7156V17.15H118.666V31.85H77.7156V34.3H118.666V49Z" fill="white"/>
+    <path d="M44.1 49H32.9C28.49 49 24.36 47.04 21.56 43.61L3.36 21.35C1.19 18.76 0 15.47 0 12.11V0H14.7V12.11L32.9 34.3H44.1V0H58.8V34.3C58.8 42.42 52.22 49 44.1 49Z" fill="white"/>
+    <g id="colorpart">
+      <path d="M559.656 54C560.761 54 561.656 54.8954 561.656 56V78C561.656 79.1046 560.761 80 559.656 80H497.656C496.552 80 495.656 79.1046 495.656 78V56C495.656 54.8954 496.552 54 497.656 54H559.656ZM534.038 69.2402C532.95 69.2404 532.07 70.1202 532.07 71.208C532.07 72.2799 532.95 73.16 534.038 73.1602C535.126 73.1602 535.99 72.28 535.99 71.208C535.99 70.1201 535.126 69.2402 534.038 69.2402ZM502.961 61.8008V64.5684C502.961 65.3362 503.233 66.0887 503.729 66.6807L507.889 71.7686C508.529 72.5524 509.473 73.0008 510.48 73.001H513.041C514.897 73.0009 516.401 71.4966 516.401 69.6406V61.8008H513.041V69.6406H510.48L506.321 64.5684V61.8008H502.961ZM518.641 61.8008V65.1611H522.561V69.6406H518.641V73.001H529.841V69.6406H525.921V65.1611C525.921 63.3051 524.417 61.8008 522.561 61.8008H518.641ZM541.603 61.8008C539.747 61.8008 538.242 63.3051 538.242 65.1611V69.6406C538.242 71.4966 539.747 73.001 541.603 73.001H550.002C551.858 73.001 553.362 71.4966 553.362 69.6406V65.1611C553.362 63.3051 551.858 61.8008 550.002 61.8008H541.603ZM550.002 69.6406H544.45L550.002 66.4248V69.6406ZM547.139 65.1611L541.603 68.377V65.1611H547.139Z" fill="#FFCC00"/>
+      <path d="M510.02 49H495.32V7.35C495.32 3.29 498.61 0 502.67 0H516.81C520.73 0 524.44 1.54 527.17 4.27L540.05 17.15C542.85 19.95 544.32 23.59 544.32 27.51V33.04C544.32 33.74 544.88 34.3 545.58 34.3C546.28 34.3 546.77 33.74 546.77 33.04V0H561.47V33.04C561.47 41.86 554.4 49 545.58 49C536.76 49 529.62 41.86 529.62 33.04V27.51L516.81 14.7H510.02V49Z" fill="#FFCC00"/>
+    </g>
+  </svg>
+  </div>
+  </div>
+
+  <div class="downloadSpecs">
+    <div class="downloadSpecsCol">
+      <div class="specItem"><span class="specLabel">Glyphs</span><span class="specValue">225</span></div>
+      <div class="specItem"><span class="specLabel">Formats</span><span class="specValue">OTF, TTF, WOFF2</span></div>
+      <div class="specItem"><span class="specLabel">Weights</span><span class="specValue">1 (Bold)</span></div>
+    </div>
+    <div class="downloadSpecsCol">
+      <div class="specItem"><span class="specLabel">Coverage</span><span class="specValue">Latin Extended</span></div>
+      <div class="specItem"><span class="specLabel">License</span><span class="specValue"><a href="#" class="eulaLink">Free</a> (Personal & Commercial)</span></div>
+      <div class="specItem"><span class="specLabel">Version</span><span class="specValue">1.0</span></div>
+    </div>
+  </div>
+
+  <div class="downloadCtas">
+    <a class="ctaPrimary" href="https://github.com/hellotherejohn/JK-Roadium/releases/download/v1.0/JKRoadium.zip">Download JKRoadium.zip</a>
+    <a class="ctaSecondary" href="https://github.com/hellotherejohn/JK-Roadium" target="_blank" rel="noopener">GitHub</a>
+  </div>
+
+  <p id="downloadCopy">By downloading or using the font, you agree to the <a href="#" id="eulaLink" class="eulaLink">terms</a>.</p>
+
+  <div id="colorCursor" aria-hidden="true">
+    <div id="colorCursorInner"></div>
+  </div>
+  <div id="colorCursorIcon" aria-hidden="true">
+    <div id="colorCursorIconScale">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 12a8 8 0 0 1 14.5-4.5"/>
+        <path d="M18.5 3v4.5H14"/>
+        <path d="M20 12a8 8 0 0 1-14.5 4.5"/>
+        <path d="M5.5 21v-4.5H10"/>
+      </svg>
+    </div>
+  </div>
+
+</section>
+
+<footer class="pageFooter">
+  <p class="footerCopyright" id="footerCopyright"></p>
+
+  <div class="fontSwitcher fontSwitcherUp" id="fontSwitcherFooter">
+    <div class="fontSwitcherSurface">
+      <button class="fontSwitcherTrigger" type="button" aria-haspopup="true" aria-expanded="false">
+        <span class="fontGlyph">R</span>
+        <span class="fontSwitcherLabel">
+          <span class="fontSwitcherTitle">JK Roadium</span>
+          <span class="fontSwitcherCaption">Display</span>
+        </span>
+        <span class="fontSwitcherChevron">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </span>
+      </button>
+
+      <div class="fontSwitcherDivider"></div>
+      <div class="fontSwitcherComingSoon">
+        <span class="fontSwitcherCaption">More fonts soon</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div id="eulaModalOverlay" class="modalOverlay" aria-hidden="true">
+  <div class="modalDialog" role="dialog" aria-modal="true" aria-labelledby="eulaModalTitle">
+    <div class="modalHeader">
+      <h2 id="eulaModalTitle">Free Font EULA: JK Roadium</h2>
+      <button class="modalClose" id="eulaModalClose" type="button" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="modalBody">
+      <p>Free font license for the JK Roadium font (the &ldquo;Font&rdquo;). By downloading or using the Font, you agree to the terms below.</p>
+
+      <h3>1. License Grant</h3>
+      <p>You're granted a free, non-exclusive license to use the Font for both personal and commercial projects, with no limit on the number of projects, users, installations, or page views.</p>
+
+      <h3>2. What You Can Do</h3>
+      <ul>
+        <li>Use the Font in any design work, including branding, print, packaging, posters, apps, games, video, social media, and merchandise.</li>
+        <li>Convert letters to outlines or vector shapes and modify those shapes for a specific design, such as customizing a logo.</li>
+        <li>Embed the Font in finished documents, PDFs, images, videos, and applications.</li>
+        <li>Use the Font as a web font, whether self-hosted or through a font-embedding service, on any number of websites.</li>
+      </ul>
+
+      <h3>3. What You Can't Do</h3>
+      <ul>
+        <li>Modify, reverse-engineer, decompile, or otherwise alter the Font software itself, including its outlines, hinting, kerning, or underlying files, and distribute the result as a font.</li>
+        <li>Sell, rent, sublicense, or give away the Font file itself, either on its own or bundled with other fonts.</li>
+        <li>Re-upload or mirror the Font file on another website, marketplace, or font directory, even for free, without prior written permission.</li>
+        <li>Claim authorship of the Font.</li>
+      </ul>
+
+      <h3>4. Ownership</h3>
+      <p>The Font remains the intellectual property of its creator. This license lets you use it, but it doesn't transfer ownership or copyright to you.</p>
+
+      <h3>5. No Warranty</h3>
+      <p>The Font is provided &ldquo;as is,&rdquo; without warranty of any kind, express or implied.</p>
+
+      <h3>Questions?</h3>
+      <p>If you want to do something with the Font that isn't covered here, just ask.</p>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module" src="roadium.js"></script>
+</body>
+</html>
