@@ -68,12 +68,19 @@ p {
 }
 
 .container {
+	/* Referenced by .video-loop.expanded's max-width below so the expanded
+	   video respects whatever the page's own side padding actually is at
+	   the current breakpoint, instead of hardcoding it (or ignoring it via
+	   a plain 100vw) in a second place that could drift out of sync with
+	   this. Custom properties inherit down through .content into
+	   .video-loop regardless of nesting depth. */
+	--edge-padding: 64px;
 	display: flex;
     flex-direction: column;
     min-height: 100vh; /* Full viewport height */
-	padding: 64px 64px 32px 64px;
+	padding: 64px var(--edge-padding) 32px var(--edge-padding);
 	box-sizing: border-box;
-	transition: padding 0.15s ease; 
+	transition: padding 0.15s ease;
 }
 
 .content {
@@ -84,17 +91,212 @@ p {
 
 @media (width <= 800px) {
 	.container {
+		--edge-padding: 32px;
 		display: flex;
 	    flex-direction: column;
 	    min-height: 100vh; /* Full viewport height */
 		padding: 32px;
 		box-sizing: border-box;
-		transition: padding 0.15s ease; 
+		transition: padding 0.15s ease;
 	}
 }
 
 header {
 	margin: 32px 0 24px 0;
+}
+
+/* No max-width/responsive clamp here on purpose -- expanding to 960px is
+   meant to actually break out past .content's own 640px column, not be
+   capped to it. */
+.video-loop {
+	position: relative;
+	width: 360px;
+	aspect-ratio: 360 / 202;
+	border-radius: 24px;
+	overflow: hidden;
+	cursor: pointer;
+	margin: 32px 0; /* collapses against header's own 24px margin-bottom above
+	                   and p's 0 margin-top below, landing on 32px both ways */
+	/* Only width/border-radius are ever explicitly set (360->960, 24->12) --
+	   aspect-ratio recomputes height every frame on its own, which is what
+	   makes this read as smoothly growing in place and pushing the content
+	   below it down as it goes, rather than several properties animating
+	   slightly out of step with each other. */
+	transition: width 550ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.video-loop.expanded {
+	width: 960px;
+	/* calc() against --edge-padding (set on .container), not a plain 100% --
+	   % alone would resolve against .content's own (640px-capped) width,
+	   defeating the whole point of breaking out past that column. This still
+	   breaks out past .content's column same as before, but now stops at the
+	   page's own actual side padding instead of running flush to the true
+	   viewport edge underneath it. */
+	max-width: calc(100vw - var(--edge-padding) * 2);
+	border-radius: 12px;
+	cursor: default;
+}
+
+.video-loop video {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: filter 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.video-loop.expanded video {
+	filter: blur(5px);
+}
+
+/* Dim + button both only show on hover -- the loop plays plain otherwise. */
+.video-dim {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: rgba(0, 0, 0, 0.35);
+	opacity: 0;
+	transition: opacity 200ms ease;
+	pointer-events: none;
+}
+.video-loop:hover .video-dim {
+	opacity: 1;
+}
+
+.video-watch {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 2; /* above .video-dim */
+	display: inline-flex;
+	align-items: center;
+	padding: 12px 18px;
+	border: none;
+	border-radius: 999px;
+	/* Same frosted-glass treatment as #gridPlayToggle on the Roadium page --
+	   the blur/inset-highlight is what actually gives it the glassy look;
+	   the flat background color alone read as just a plain gray chip. */
+	background: rgb(90 90 90 / 45%);
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 6px 2px rgba(255, 255, 255, 0.05), inset 0 -1px 0px 0px rgba(255, 255, 255, 0.15), inset 0 1px 0px 0px rgba(255, 255, 255, 0.5);
+	color: #fff;
+	font-family: "Inter", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	cursor: pointer;
+	opacity: 0;
+	transform: translate(-50%, -50%) scale(0.8);
+	pointer-events: none;
+	/* The overshoot (y > 1) is what gives the reveal its bit of elasticity --
+	   snappy in (250ms) than it eases back out. */
+	transition: opacity 250ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.video-loop:hover .video-watch {
+	opacity: 1;
+	transform: translate(-50%, -50%) scale(1);
+	pointer-events: auto;
+}
+/* Higher specificity than the hover rule above (adds .pressed), so the
+   press-down scale actually wins while the mouse is still down/hovering,
+   instead of the reveal's own scale(1) overriding it. */
+.video-loop:hover .video-watch.pressed {
+	transform: translate(-50%, -50%) scale(0.97);
+	transition: transform 120ms ease;
+}
+
+.video-loop.expanded .video-dim,
+.video-loop.expanded .video-watch {
+	display: none;
+}
+
+/* The Vimeo embed crossfades in on top of the still-playing (now blurred)
+   loop once the grow finishes, rather than an abrupt cut from one to the
+   other. Sized 1px oversized on every edge (rather than a plain inset:0)
+   so subpixel rounding during the width transition can never leave a
+   sliver of the container's own background peeking through at the rounded
+   corners -- the extra 1px bleed is simply clipped away by .video-loop's
+   own overflow:hidden either way. */
+.video-embed-wrap {
+	position: absolute;
+	top: -1px;
+	left: -1px;
+	right: -1px;
+	bottom: -1px;
+	z-index: 2;
+	opacity: 0;
+	transition: opacity 400ms ease;
+	pointer-events: none;
+}
+.video-embed-wrap.visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+.video-embed-wrap iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+	display: block;
+}
+
+/* Inside the video, top-left, shown only on hover while expanded -- same
+   idea as Vimeo's own player controls only appearing on hover. z-index
+   above .video-embed-wrap since it has to stay clickable over the iframe. */
+.video-minimize {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	z-index: 3;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 50%;
+	/* Same darker fill as .video-watch (rather than the lighter frosted-glass
+	   white used elsewhere) so it stays visible over light/bright frames of
+	   the reel too, not just dark ones. */
+	background: rgb(90 90 90 / 45%);
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 6px 2px rgba(255, 255, 255, 0.05), inset 0 -1px 0px 0px rgba(255, 255, 255, 0.15), inset 0 1px 0px 0px rgba(255, 255, 255, 0.5);
+	color: #fff;
+	cursor: pointer;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 200ms ease;
+}
+.video-minimize svg {
+	width: 18px;
+	height: 18px;
+}
+.video-loop.expanded:hover .video-minimize {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Touch has no real hover state to reveal any of the three controls above
+   with, so all three (dim, "2025 Reel", and the minimize/close X) are just
+   always shown here instead of gated behind :hover. The dim comes along
+   with the reel button rather than being left off on its own -- it's what
+   the button was designed to sit on top of for contrast in the first
+   place. Minimize isn't gated by .expanded:hover:not(...) either -- it's
+   still only ever visible while .expanded regardless, same as before. */
+@media (hover: none), (pointer: coarse) {
+	.video-dim {
+		opacity: 1;
+	}
+	.video-watch {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+		pointer-events: auto;
+	}
+	.video-loop.expanded .video-minimize {
+		opacity: 1;
+		pointer-events: auto;
+	}
 }
 
 .logotype {
@@ -103,7 +305,7 @@ header {
 /* LINKS */
 
 .links {
-	margin-top: 52px; /* 64px minus the 12px from margin-top of shuffle-link  */
+	margin-top: 32px;
 }
 
 footer {
