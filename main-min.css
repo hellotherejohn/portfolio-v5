@@ -1,6 +1,6 @@
 @media (hover: none) {
   .shuffle-link {
-    pointer-events: auto; /* Disables hover interactions */
+    pointer-events: auto;
   }
 }
 
@@ -14,7 +14,6 @@
   color: #000;
 }
 
-/* LOCAL IMPORT */
 @font-face {
     font-family: 'JK Quarry Beta';
     src: url('assets/JKQuarryBeta-Regular.otf') format('opentype');
@@ -22,7 +21,19 @@
     font-style: normal;
 }
 
-/* GOOGLE FONTS IMPORT  */
+/* Shared with the Roadium showcase page -- points at its assets folder
+   rather than duplicating the font files here. */
+@font-face {
+    font-family: 'JK Roadium';
+    src: url('fonts/roadium/assets/JKRoadium-Bold.woff2') format('woff2'),
+         url('fonts/roadium/assets/JKRoadium-Bold.woff') format('woff'),
+         url('fonts/roadium/assets/JKRoadium-Bold.ttf') format('truetype'),
+         url('fonts/roadium/assets/JKRoadium-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 .inter-<uniquifier> {
 	font-family: "Inter", sans-serif;
 	font-optical-sizing: auto;
@@ -62,34 +73,38 @@ p {
 	font-size: 16px;
 	font-weight: 400;
 	margin: 0;
-	line-height: 24px; /* 141.176% */
+	line-height: 24px;
 	letter-spacing: -0.051px;
 	text-wrap: balance;
 }
 
 .container {
+	/* Consumed by .video-loop.expanded's max-width below, so the expanded
+	   video respects the page's actual side padding at any breakpoint. */
+	--edge-padding: 64px;
 	display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Full viewport height */
-	padding: 64px 64px 32px 64px;
+    min-height: 100vh;
+	padding: 64px var(--edge-padding) 32px var(--edge-padding);
 	box-sizing: border-box;
-	transition: padding 0.15s ease; 
+	transition: padding 0.15s ease;
 }
 
 .content {
 	width: 100%;
 	max-width: 640px;
-	flex: 1; /* Pushes the footer down */
+	flex: 1;
 }
 
 @media (width <= 800px) {
 	.container {
+		--edge-padding: 32px;
 		display: flex;
 	    flex-direction: column;
-	    min-height: 100vh; /* Full viewport height */
+	    min-height: 100vh;
 		padding: 32px;
 		box-sizing: border-box;
-		transition: padding 0.15s ease; 
+		transition: padding 0.15s ease;
 	}
 }
 
@@ -97,13 +112,210 @@ header {
 	margin: 32px 0 24px 0;
 }
 
+/* No max-width/clamp here on purpose -- expanding to 960px breaks out past
+   .content's own 640px column. */
+.video-loop {
+	position: relative;
+	width: 360px;
+	aspect-ratio: 360 / 202;
+	border-radius: 24px;
+	overflow: hidden;
+	cursor: pointer;
+	margin: 32px 0;
+	transition: width 550ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.video-loop.expanded {
+	width: 960px;
+	max-width: calc(100vw - var(--edge-padding) * 2);
+	border-radius: 12px;
+	cursor: default;
+}
+
+.video-loop video {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: filter 550ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.video-loop.expanded video {
+	filter: blur(5px);
+}
+
+.video-dim {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: rgba(0, 0, 0, 0.35);
+	opacity: 0;
+	transition: opacity 200ms ease;
+	pointer-events: none;
+}
+.video-loop:hover .video-dim {
+	opacity: 1;
+}
+
+.video-watch {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 2;
+	display: inline-flex;
+	align-items: center;
+	padding: 12px 18px;
+	border: none;
+	border-radius: 999px;
+	background: rgb(90 90 90 / 45%);
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 6px 2px rgba(255, 255, 255, 0.05), inset 0 -1px 0px 0px rgba(255, 255, 255, 0.15), inset 0 1px 0px 0px rgba(255, 255, 255, 0.5);
+	color: #fff;
+	font-family: "Inter", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+	cursor: pointer;
+	opacity: 0;
+	transform: translate(-50%, -50%) scale(0.8);
+	pointer-events: none;
+	transition: opacity 250ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.video-loop:hover .video-watch {
+	opacity: 1;
+	transform: translate(-50%, -50%) scale(1);
+	pointer-events: auto;
+}
+.video-loop:hover .video-watch.pressed {
+	transform: translate(-50%, -50%) scale(0.97);
+	transition: transform 120ms ease;
+}
+
+.video-loop.expanded .video-dim,
+.video-loop.expanded .video-watch {
+	display: none;
+}
+
+/* Shown while expanded and blurred, before the Vimeo iframe has actually
+   loaded -- hidden again once .embed-ready lands (see main.js's iframe
+   'load' handler). */
+.video-loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 10px 14px;
+	border-radius: 999px;
+	background: #111;
+	transform: translate(-50%, -50%);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 200ms ease;
+}
+.video-loop.expanded .video-loading {
+	opacity: 1;
+}
+.video-loop.expanded.embed-ready .video-loading {
+	opacity: 0;
+}
+.video-loading span {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #fff;
+	animation: videoLoadingBounce 1.2s ease-in-out infinite;
+}
+.video-loading span:nth-child(2) { animation-delay: 0.15s; }
+.video-loading span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes videoLoadingBounce {
+	0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+	40% { transform: scale(1); opacity: 1; }
+}
+
+/* 1px oversized on every edge so subpixel rounding during the width
+   transition never leaves a gap at the rounded corners -- clipped by
+   .video-loop's own overflow:hidden either way. */
+.video-embed-wrap {
+	position: absolute;
+	top: -1px;
+	left: -1px;
+	right: -1px;
+	bottom: -1px;
+	z-index: 2;
+	opacity: 0;
+	transition: opacity 400ms ease;
+	pointer-events: none;
+}
+.video-embed-wrap.visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+.video-embed-wrap iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: none;
+	display: block;
+}
+
+.video-minimize {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	z-index: 3;
+	width: 40px;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	border-radius: 50%;
+	background: rgb(90 90 90 / 45%);
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 6px 2px rgba(255, 255, 255, 0.05), inset 0 -1px 0px 0px rgba(255, 255, 255, 0.15), inset 0 1px 0px 0px rgba(255, 255, 255, 0.5);
+	color: #fff;
+	cursor: pointer;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 200ms ease;
+}
+.video-minimize svg {
+	width: 18px;
+	height: 18px;
+}
+.video-loop.expanded:hover .video-minimize {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+@media (hover: none), (pointer: coarse) {
+	.video-dim {
+		opacity: 1;
+	}
+	.video-watch {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+		pointer-events: auto;
+	}
+	.video-loop.expanded .video-minimize {
+		opacity: 1;
+		pointer-events: auto;
+	}
+}
+
 .logotype {
 	margin: -10px -10px -10px -12px;
 }
-/* LINKS */
 
 .links {
-	margin-top: 52px; /* 64px minus the 12px from margin-top of shuffle-link  */
+	margin-top: 32px;
+	/* Wraps right after WORK/Fonts instead of also fitting Email on that
+	   first line; shrinks to fit on narrower viewports since this is a
+	   plain block, not a flex/grid item. */
+	max-width: 450px;
 }
 
 footer {
@@ -118,15 +330,17 @@ footer {
 	font-family: "JK Quarry Beta";
 	letter-spacing: 1px;
 	text-transform: uppercase;
-	font-size: 32px;
+	font-size: 24px;
 	text-decoration: none;
 	color: #404040;
 	display: inline-block;
 	transition: background-size 0.3s ease;
 	background: #EEEFF5;
-	padding: 20px;
+	padding: 16px;
 	border-radius: 12px;
 	margin: 12px 12px 0 0;
+	border: none;
+	outline: none;
 }
 
 .shuffle-link:hover {
@@ -137,7 +351,7 @@ footer {
 
 .shuffle-link span{
   display: inline-block;
-  transition: transform 0.15s ease;  
+  transition: transform 0.15s ease;
 }
 
 .inactive-link {
@@ -149,12 +363,12 @@ footer {
 	font-family: "JK Quarry Beta";
 	letter-spacing: 1px;
 	text-transform: uppercase;
-	font-size: 32px;
+	font-size: 24px;
 	text-decoration: none;
 	color: rgba(64, 64, 64, 0.33);
 	transition: background-size 0.3s ease;
 	background: #EEEFF5;
-	padding: 20px;
+	padding: 16px;
 	border-radius: 12px;
 	margin: 12px 12px 0 0;
 	cursor: not-allowed;
@@ -175,4 +389,75 @@ footer {
 	background: #fff;
 	border-radius: 12px;
 	margin: 0 0 0 16px;
+}
+
+/* Fonts pill: a plain .shuffle-link that fans a small stack of pills out
+   above it on click. .fontsMenu only needs position:relative -- the fan
+   is an absolutely-positioned overlay, so it has no size of its own to
+   affect the row's layout. Pills are generated in main.js from
+   FONT_ITEMS. */
+.fontsMenu {
+	position: relative;
+	display: inline-block;
+}
+.fontsFan {
+	position: absolute;
+	left: 50%;
+	bottom: 100%;
+	z-index: 20;
+	pointer-events: none;
+}
+/* Per-pill wrapper for the spawn/retract choreography (position, scale,
+   opacity), kept separate from .fanPill so that layer is free for the
+   continuous JS-driven hover motion. --home-x/--home-y/--home-rotate and
+   the stagger delay are set inline per pill from main.js. transform-origin
+   is bottom-center so --home-rotate reads as each pill tipping over from
+   its own base, like a fanned hand of cards. */
+.fanPillHome {
+	position: absolute;
+	left: 0;
+	top: 0;
+	transform-origin: 50% 100%;
+	transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(0.4);
+	opacity: 0;
+	pointer-events: none;
+	transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 140ms ease;
+}
+.fontsMenu.open .fanPillHome {
+	transform: translate(-50%, -50%) translate(var(--home-x), var(--home-y)) rotate(var(--home-rotate, 0deg)) scale(1);
+	opacity: 1;
+	pointer-events: auto;
+	transition-delay: var(--stagger-delay, 0ms);
+}
+.fontsMenu:not(.open) .fanPillHome {
+	/* Retracting is quicker and unstaggered -- everything snaps back
+	   together rather than trickling back in the order it fanned out. */
+	transition-duration: 200ms, 140ms;
+}
+
+/* The actual pill, floating on top of .fanPillHome's position via a second,
+   nested transform. --spring-x/--spring-y/--pill-scale are written every
+   frame from main.js's spring simulation (never by a CSS transition). */
+.fanPill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
+	padding: 12px 18px;
+	border-radius: 999px;
+	background: #404040;
+	color: #fff;
+	font-family: "Inter", sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	cursor: pointer;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+	transform: translate(var(--spring-x, 0px), var(--spring-y, 0px)) scale(var(--pill-scale, 1));
+}
+/* "More soon..." -- a permanent, non-navigable placeholder (rendered as a
+   <span> in main.js, not an <a>). */
+.fanPill.disabled {
+	color: rgba(255, 255, 255, 0.45);
+	cursor: default;
 }

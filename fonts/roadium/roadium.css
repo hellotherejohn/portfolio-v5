@@ -1,0 +1,1278 @@
+  /* Embedded rather than relied on as a locally-installed font -- Safari
+     (unlike Chrome) won't match a bare font-family name against a font
+     installed on the system at all, it only ever uses @font-face-declared
+     fonts, so without this the whole page fell back to Arial there. */
+  @font-face {
+    font-family: 'JK Roadium';
+    /* Listed in the order a browser should prefer them, not just what's on
+       disk -- it downloads only the first format in this list it actually
+       supports, never all four, so there's no real cost to listing the
+       rest. woff2 first: it's smaller than every other format here and has
+       supported basically every browser in real-world use for years now
+       (Safari included, since 14). woff/ttf/otf below it exist purely as a
+       safety net for something old enough to predate woff2 -- unlikely to
+       ever actually get hit, but free to keep now that all four exist. */
+    src: url('assets/JKRoadium-Bold.woff2') format('woff2'),
+         url('assets/JKRoadium-Bold.woff') format('woff'),
+         url('assets/JKRoadium-Bold.ttf') format('truetype'),
+         url('assets/JKRoadium-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  ::-moz-selection {
+  background: #FFBF00;
+  color: #000;
+}
+
+::selection {
+  background: #FFBF00;
+  color: #000;
+}
+
+  html { scroll-behavior: smooth; }
+  html, body { margin: 0; background: #fff; }
+  * { box-sizing: border-box; }
+
+  /* overflow-x is a safety net, not a fix -- everything below is meant to
+     actually fit at any width, this just stops a stray overflow somewhere
+     from forcing the whole page to scroll sideways. */
+  body { padding: 32px 20px; overflow-x: hidden; }
+  @media (max-width: 480px) {
+    body { padding: 48px 12px; }
+  }
+
+  /* Every section is authored at a 960px design width. Below that, sections
+     go fluid (100% of the padded body) instead of forcing horizontal scroll
+     -- individual sections handle their own internal scaling (aspect-ratio
+     instead of fixed heights, percentage-based children, responsive type). */
+  .section {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto 20px;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  /* ---- top nav ---- */
+  /* Same fluid-up-to-960px column every section below uses, so the home icon
+     and font switcher line up with the sections' own edges. */
+  .topNav {
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .navHome {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    text-decoration: none;
+    color: #6E6E7E;
+    transform: scale(1);
+    transition: color 150ms ease, transform 150ms ease;
+  }
+  /* An SVG icon instead of the "↩" character -- that glyph sits high in its
+     own line-box (just how it's drawn in every typeface), which read as
+     off-center next to the text. align-items:center above lines this up
+     against the text's actual middle instead. */
+  .navHome svg {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 11px;
+  }
+  .navHome:hover { color: #000; }
+  .navHome.pressed { transform: scale(0.97); }
+
+  /* #fontSwitcher itself just reserves a fixed 60px of space in the
+     topNav's layout, permanently -- the actual expanding shape
+     (.fontSwitcherSurface) is absolutely positioned on top of it and grows
+     downward as an overlay in its own stacking layer, so opening it never
+     pushes the sections below down the page the way a normal-flow height
+     change would. */
+  .fontSwitcher {
+    position: relative;
+    width: 250px;
+    height: 60px;
+  }
+  /* This one box IS the whole control -- the trigger row and the item rows
+     below it are just normal-flow children stacked inside it, not a
+     separate floating menu positioned under a separate button. One shared
+     border-radius/background/overflow that never changes is what actually
+     fixes the old "snaps into a sharp corner" glitch: there's no second
+     shape with its own radius to suddenly not match any more, because
+     there's only ever been the one shape. Collapsed height (60px) is the
+     trigger row's own height; open height is set inline from JS (the real
+     content height isn't knowable to CSS ahead of time) and animates on a
+     gentle "back ease out" curve -- the y a little over 1 is what gives it
+     a light, controlled overshoot rather than a sharp linear stop. */
+  .fontSwitcherSurface {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: 60px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0), 0 0 0 1px rgba(0, 0, 0, 0.1);
+    transform: scale(1);
+    /* transform has its own separate, much shorter transition -- the press
+       bump (see .pressed below) is a distinct interaction from the
+       expand/collapse and shouldn't share its spring curve/timing, which is
+       what made the two read as unsynced before. */
+    transition: height 320ms cubic-bezier(0.34, 1.2, 0.64, 1), box-shadow 260ms ease, background-color 260ms ease, transform 150ms ease;
+  }
+  .fontSwitcherSurface:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(0, 0, 0, 0.05); }
+
+  /* Opaque white while open (rather than the closed state's translucent
+     fill) -- collapsed, it only ever sits over the plain page background,
+     but expanded it can float over darker sections below (the intro
+     image), and the translucent fill was letting that show through. The
+     extra 1px solid-color "ring" shadow gives it a crisp edge against
+     whatever's behind it now that it's not relying on the page's own color
+     to read as opaque. */
+  .fontSwitcher.open .fontSwitcherSurface {
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+  .fontSwitcherTrigger {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-shrink: 0;
+    gap: 12px;
+    padding: 8px 14px 10px 14px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  /* Shared between the trigger and the menu's own "current font" row below,
+     so the thumbnail glyph always renders identically in both places. */
+  .fontGlyph {
+    flex: 0 0 auto;
+    font-family: 'JK Roadium', Arial, Helvetica, sans-serif;
+    font-size: 42px;
+    line-height: 1;
+    color: #6E6E7E;
+    transition: color 150ms ease;
+  }
+  .fontSwitcherLabel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    text-align: left;
+    /* flex:1 (not width:stretch -- Safari doesn't support that keyword, so
+       the label stayed shrink-to-fit there and the chevron never got
+       pushed out to the trigger's far right edge like it does in Chrome) */
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .fontSwitcherTitle {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+    color: #000;
+  }
+  .fontSwitcherCaption {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 1;
+    color: #6E6E7E;
+  }
+  .fontSwitcherChevron {
+    flex: 0 0 auto;
+    display: flex;
+    /* 0.4 landed at 2.85:1 against the white surface behind it -- just under
+       WCAG's 3:1 minimum for meaningful UI graphics. 0.42 clears it (3.04:1). */
+    color: rgba(0, 0, 0, 0.42);
+  }
+  .fontSwitcherChevron svg { width: 18px; height: 18px; }
+  .fontSwitcher.open .fontSwitcherChevron { transform: rotate(180deg); }
+
+  /* The footer copy of this control expands upward instead of down (so it
+     grows into the visible page above it rather than off the bottom of the
+     viewport) -- .fontSwitcherUp is the only thing that differs between the
+     two, and the markup is otherwise identical (same DOM order: trigger,
+     then each divider/item):
+     - the surface anchors to the bottom edge instead of the top, so
+       growing its height pushes the top edge up, not the bottom edge down.
+     - flex-direction:column-reverse flips which end of that box the first
+       child (the trigger) renders at. Combined with the bottom anchor, this
+       is what keeps the trigger pinned to the visible bottom edge at any
+       height, collapsed or expanded, instead of the *item rows* being what
+       stays in the (wrong, top-of-flow) 60px window when collapsed.
+     - the chevron's resting/open rotation is inverted to match (pointing
+       up by default -- "there's more above" -- and down once opened).
+     Same specificity as the rules above (three classes each), so these
+     need to come after them in the stylesheet to actually win. */
+  .fontSwitcherUp .fontSwitcherSurface { top: auto; bottom: 0; flex-direction: column-reverse; }
+  .fontSwitcherUp .fontSwitcherChevron { transform: rotate(180deg); }
+  .fontSwitcherUp.open .fontSwitcherChevron { transform: rotate(0deg); }
+
+  /* Same height as the trigger (60px) and the same horizontal padding
+     (14px) as its content. flex-shrink:0 -- .fontSwitcherSurface is a flex
+     column (needed for the footer copy's column-reverse trick), and
+     without this, flexbox would squash every row proportionally to fit
+     whatever height the surface happens to be at during the expand
+     animation, rather than letting overflow:hidden do its job of simply
+     clipping the un-shrunk rows. */
+  .fontSwitcherOption {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+    height: 60px;
+    padding: 0 14px;
+    cursor: pointer;
+  }
+  /* No background change on hover -- just the glyph itself darkening to
+     full black, same idea as .fontSwitcherTrigger's own thumbnail but
+     scoped per-row instead of to the one always-visible trigger glyph. */
+  .fontSwitcherOption:hover .fontGlyph { color: #000; }
+  /* Edge to edge, no side margin -- the menu's own overflow:hidden already
+     keeps it (and the hover background above) from poking past the
+     rounded corners at the very top/bottom of the list. */
+  .fontSwitcherDivider {
+    flex-shrink: 0;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.08);
+  }
+  /* A stand-in row for when there's nothing real to list yet -- same row
+     height as everything else, but just a centered caption, no
+     glyph/title, and not a selectable option (plain cursor, and excluded
+     from the .fontSwitcherOption query in setupFontSwitcher so it doesn't
+     get click-to-close wiring). */
+  .fontSwitcherComingSoon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 60px;
+    cursor: default;
+  }
+  /* Items/dividers fade in on top of the height's own reveal -- opacity 0
+     by default (and instantly so, via 0-delay on the way back down) so
+     nothing flashes visible while the menu is collapsing, then fades in
+     with a short delay once open so the fade doesn't have to fight the very
+     start of the spring motion. */
+  .fontSwitcherOption, .fontSwitcherDivider, .fontSwitcherComingSoon {
+    opacity: 0;
+    filter: blur(2px);
+    transition: opacity 200ms ease;
+  }
+  .fontSwitcher.open .fontSwitcherOption, .fontSwitcher.open .fontSwitcherDivider, .fontSwitcher.open .fontSwitcherComingSoon {
+    opacity: 1;
+    filter: blur(0px);
+    transition-delay: 120ms;
+  }
+
+  /* ---- intro section ---- */
+  /* aspect-ratio (960:1024, exactly matching roadium-intro.jpg's own ratio)
+     replaces the old fixed 1024px height so the section's box always scales
+     with its fluid width instead of the background image getting cropped or
+     leaving gaps at narrower viewports. */
+  #introSection {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 960 / 1024;
+    height: auto;
+    /* Below ~703px wide, the aspect-ratio-derived height would drop under
+       750px -- min-height overrides it there so the section stays tall
+       enough for the background graphic to read well, at the cost of
+       background-size:cover cropping a bit more of the image's sides
+       (already how cover behaves any time a box's ratio doesn't match the
+       image's own). */
+    min-height: 750px;
+    background-image: url('assets/roadium-intro.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Every absolute offset/size in this block used to be a fixed px value
+     tuned against the 960x1024 design canvas -- now expressed as a % of that
+     same canvas (top as % of #introSection's height, left/width/height of
+     .introTitleChrome as % of .introTitle's own 632x171 box) so the whole
+     lockup scales down together instead of the chrome mark drifting off the
+     wordmark as the section shrinks. */
+  .introContent {
+    position: absolute;
+    top: 11.719%; /* 120/1024 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(632px, 86%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .introTitle {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 632 / 171;
+    height: auto;
+  }
+  /* A bit of extra margin around just the wordmark itself on phone-width
+     viewports -- .introContent (its container) stays at the same 86% as
+     everywhere else; align-items:center on .introContent centers this
+     narrower box automatically. */
+  @media (max-width: 600px) {
+    .introTitle { width: 90%; }
+  }
+  .introTitle svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  /* Best-estimate placement over the flag icon from the reference photo --
+     jk-chrome.png has no flag of its own (that lives in the SVG), so this
+     just needs to sit roughly centered on #flag; nudge left/top/width/height
+     once it's visible live if it doesn't line up exactly. Sized at half its
+     pixel dimensions (323x297), matching the @2x convention every other
+     image asset on this page already follows. Percentages are that same
+     -25/43/161.5/148.5px placement expressed against .introTitle's own
+     632x171 box, so it stays put as .introTitle scales. */
+  .introTitleChrome {
+    position: absolute;
+    left: -3.956%;
+    top: 25.146%;
+    width: 25.554%;
+    height: 86.842%;
+    pointer-events: none;
+  }
+
+  /* Letters fade/scale on in a strict left-to-right stagger (R-O-A-D-I-U-M);
+     the flag and chrome mark (below) do the same, just longer. */
+  #glyph_R, #glyph_O, #glyph_A, #glyph_D, #glyph_I, #glyph_U, #glyph_M {
+    opacity: 0;
+    /* fill-box + center: SVG elements transform from the SVG viewport's
+       origin by default, not their own center -- without this the scale
+       below would grow from the corner of the whole wordmark instead of
+       each letter's own middle. */
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: introFadeScale 320ms ease forwards;
+  }
+  #glyph_R { animation-delay: 45ms; }
+  #glyph_O { animation-delay: 90ms; }
+  #glyph_A { animation-delay: 135ms; }
+  #glyph_D { animation-delay: 180ms; }
+  #glyph_I { animation-delay: 225ms; }
+  #glyph_U { animation-delay: 270ms; }
+  #glyph_M { animation-delay: 315ms; } /* last letter: finishes at 635ms, the end of the whole sequence */
+
+  /* Flag and chrome mark: plain fade/scale, same as the letters. The chrome
+     mark runs noticeably longer than a single letter's 320ms, timed to land
+     around 70% through the whole ~635ms letter sequence (last letter,
+     #glyph_M, finishes at 315ms delay + 320ms = 635ms). */
+  #flag {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: introFadeScale 320ms ease forwards;
+  }
+  .introTitleChrome {
+    opacity: 0;
+    animation: introFadeScale 450ms ease forwards;
+  }
+  /* Scale starts noticeably smaller (0.7, was 0.85) so the grow-into-place
+     motion reads as more prominent. */
+  @keyframes introFadeScale {
+    0%   { opacity: 0; transform: scale(0.7); filter: blur(10px); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+
+  /* Quick, subtle entrance for the copy below the wordmark -- plain fade,
+     no position shift. Both the description and CTAs fade in together,
+     starting 550ms after the title animation begins (well before the
+     letters finish at 847.5ms) rather than waiting on them. */
+  @keyframes introCopyFadeIn {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1);}
+  }
+  .introDescription {
+    margin: 0;
+    font-family: "Inter", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #bfbfbf;
+    text-align: center;
+    opacity: 0;
+    animation: introCopyFadeIn 500ms ease-out 350ms forwards;
+  }
+  .introCtas {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 0;
+    opacity: 0;
+    animation: introCopyFadeIn 362.5ms ease-out 550ms forwards;
+  }
+
+  .specItem {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+  }
+  .specLabel {
+    /* 0.55 only hit 3.9:1 against the lighter end of #downloadSection's
+       gradient (where this text actually sits) -- under the 4.5:1 minimum
+       for normal text. 0.65 clears it (4.75:1 there, 8.4:1 at the darker
+       end), same fix as #downloadCopy below. */
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 600;
+  }
+  .specValue { color: #fff; }
+
+  .ctaPrimary, .ctaSecondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    /* Same press-feedback treatment as #gridPlayToggle/.filterPill: a quick
+       scale down on mousedown (see the .pressed class toggled in the script
+       below), eased back up on release. */
+    transform: scale(1);
+    transition: transform 150ms ease;
+  }
+  .ctaPrimary.pressed, .ctaSecondary.pressed { transform: scale(0.97); }
+  .ctaPrimary {
+    height: 44px;
+    padding: 0 22px;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    text-shadow: 0 1px 1px rgba(47, 82, 191, 0.5);
+    /* Layered background: a 50%-opacity radial gradient (ellipse, so it
+       stretches to the button's own width) sits on top of the base linear
+       gradient. Both gradients' colors are pre-mixed to rgba so the radial
+       layer's opacity doesn't need a separate blend-mode trick. */
+    background:
+      radial-gradient(ellipse at top, rgba(87, 163, 255, 0.5) 0%, rgba(55, 81, 239, 0.5) 100%),
+      linear-gradient(to top, #3751EF 0%, #57A3FF 100%);
+    /* Two inset shadows doing two different jobs: a 1px "inside border"
+       (0 spread would be invisible, so spread carries the width instead),
+       and a top-side inner shadow (positive inset Y offset reads as light
+       from below / shadow along the top edge, not the bottom). */
+    box-shadow:
+      inset 0 1.5px 1px 0 rgba(159, 224, 255, 0.35), inset 0 -2px 4px 2px rgba(159, 224, 255, 0.1), inset 0 -1px 0px 0px rgba(159, 224, 255, 0.17), 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 4px 8px 0 rgba(0, 0, 0, 0.05);
+  }
+  .ctaPrimary:hover {
+    text-shadow: 0 1px 1px rgba(47, 82, 191, 0.7);
+    box-shadow: inset 0 2px 4px 0 rgba(159, 224, 255, .5), inset 0 -2px 6px 2px rgba(159, 224, 255, 0.17), inset 0 -1px 0px 0px rgba(159, 224, 255, 0.25), 0 4px 6px 0 rgba(0, 0, 0, 0.05), 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+  }
+  .ctaSecondary {
+    height: 44px;
+    padding: 0 22px;
+    color: #fff;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.01);
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .ctaSecondary:hover {
+    box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 6px 2px rgba(255, 255, 255, 0.05), inset 0 -1px 0px 0px rgba(255, 255, 255, 0.15), inset 0 1px 0px 0px rgba(255, 255, 255, 0.25);
+  }
+
+  /* ---- sample image sections ---- */
+  /* Real <img> elements, not background-image -- so link previews (Open
+     Graph scrapers, social-media unfurls, etc.) that lift images straight
+     off the page can actually find these, the way they never can with a CSS
+     background. .section's own overflow:hidden + border-radius already
+     clips the img to the rounded corners, same as #gridVideoSection's
+     <video> below does -- no separate radius needed on the img itself.
+     aspect-ratio replaces each fixed height, exactly matching that image's
+     own ratio (so object-fit:cover never has to crop anything) -- the box
+     scales with the fluid section width instead. */
+  #uiSampleSection, #selectSampleSection, #daypassSampleSection { position: relative; }
+  #uiSampleSection { height: auto; aspect-ratio: 960 / 690; }
+  #selectSampleSection { height: auto; aspect-ratio: 960 / 770; }
+  #daypassSampleSection { height: auto; aspect-ratio: 960 / 600; }
+  #uiSampleSection img, #selectSampleSection img, #daypassSampleSection img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .sampleLabel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #FFC700;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    color: #000;
+  }
+
+  /* ---- grid video section ---- */
+  #gridVideoSection {
+    position: relative;
+    height: auto;
+    aspect-ratio: 960 / 540;
+    cursor: pointer;
+  }
+  #gridVideoSection video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none; /* click-to-pause is handled on the section, not the native video element */
+  }
+  /* Same frosted-glass treatment as #colorCursorInner: a translucent white
+     fill with a heavy backdrop-filter blur and a handful of inset
+     highlights standing in for a light source, rather than a flat color. */
+  #gridPlayToggle {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 6px 2px rgba(255, 255, 255, 0.05), inset 0 -1px 0px 0px rgba(255, 255, 255, 0.15), inset 0 1px 0px 0px rgba(255, 255, 255, 0.5);
+    color: #fff;
+    cursor: pointer;
+    /* Pressed regardless of where in the video the click actually landed
+       (see the section-wide mousedown/mouseup listeners), not just when
+       pressing the button itself. */
+    transform: scale(1);
+    transition: transform 150ms ease;
+  }
+  #gridPlayToggle.pressed { transform: scale(0.97); }
+  #gridPlayToggle svg { width: 18px; height: 18px; }
+
+  /* ---- words section ---- */
+  #wordsSection {
+    background: #000;
+    padding: 50px 100px 150px 100px;
+    /* Every group's rendered size is its own --pt value (below) times this
+       one scale factor, stepped down at narrower widths. The divider labels
+       are never hardcoded against this -- see updateDividerLabels() in the
+       script, which reads each group's actual computed font-size back out
+       after any change here and writes that real number into its label, so
+       the two can never drift out of sync. */
+    --wsScale: 1;
+  }
+  @media (max-width: 900px) {
+    #wordsSection { padding: 40px 40px; --wsScale: 0.8; }
+  }
+  @media (max-width: 600px) {
+    #wordsSection { padding: 32px 20px; --wsScale: 0.6; }
+    .divider:not(:first-child) { margin-top: 28px; }
+  }
+  @media (max-width: 420px) {
+    #wordsSection { padding: 24px 14px; --wsScale: 0.48; }
+  }
+
+  .divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .dividerLine {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%);
+  }
+  .dividerPill {
+    position: relative; /* stacked (via z-index) above dividerLine despite coming first in flow-paint order */
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px 8px 0px; /* was 8px 12px 8px 10px, an optical correction for when this pill was centered -- now left-aligned, so the two sides match */
+    border-radius: 999px;
+    background: #000;
+  }
+  .dividerDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FFC700;
+    flex: 0 0 auto;
+  }
+  .dividerLabel {
+    font-family: "Inter", sans-serif, monospace;
+    font-size: 14px;
+    line-height: 1;
+    color: #fff;
+  }
+
+  /* Each group (72pt/120pt/160pt/...) is its own divider + .wordsList pair;
+     size is set per instance via an inline style="font-size:...px" on
+     .wordsList and inherited down, rather than one class per size. */
+  .divider:not(:first-child) { margin-top: 40px; }
+
+  .wordsList {
+    position: relative;
+    margin-top: 10px;
+    /* --pt is set per instance (inline style="--pt: 72;" etc.) instead of a
+       literal font-size, so #wordsSection's --wsScale above can step it down
+       at narrower widths without touching the markup. */
+    font-size: calc(var(--pt, 72) * 1px * var(--wsScale, 1));
+  }
+  .wordsBase, .wordsReveal {
+    /* JK Roadium is embedded via @font-face at the top of this stylesheet. */
+    font-family: 'JK Roadium', Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    font-size: inherit;
+    line-height: 1.15;
+    text-align: left;
+  }
+  .wordsBase { color: #494957; }
+  /* Slightly looser than the other groups' shared 1.15 -- this is the group
+     carrying the inline mrbls logo, whose 1.25em height otherwise crowds the
+     line above it. */
+  #wordsGroup32 .wordsBase, #wordsGroup32 .wordsReveal { line-height: 1.5; }
+  .wordsReveal {
+    position: absolute;
+    inset: 0;
+    color: #fff;
+    pointer-events: none;
+  }
+  /* display:table (not inline-block) so each line still shrink-wraps to its
+     own text width -- needed because the reveal sweep below measures that
+     exact width to know where "fully revealed" actually ends. inline-block
+     used to do that same shrink-wrap, but being inline-level, it also let
+     short lines (e.g. "QUALITY*") flow onto the same visual row as the next
+     one once scaling shrank them enough to fit side by side -- table is
+     block-level, so it always starts a new line no matter how short its
+     content is. margin:0 (not auto) keeps it left-aligned against the
+     section's own padding rather than centered. */
+  .wordLine { display: table; margin: 0; white-space: nowrap; }
+  .wordsReveal .wordLine {
+    /* mask-image set per line from JS every frame (updateWordsReveal, in the
+       render loop below): a left-to-right wipe (teleprompter-style, not a
+       block-wide vertical fade) whose progress comes from where THIS row's
+       own position sits relative to a fixed point in the viewport (60% down),
+       converted with self-clamping gradient stops -- see the JS comment. */
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    /* The gradient itself only ever varies left-to-right, so stretching its
+       box to 3x the row's own height (centered) doesn't change the fade at
+       all -- it just gives tall glyph parts (a diacritic ring above cap
+       height, a cedilla hook below the baseline) room to sit inside the
+       mask's coverage. Without this, anything painted outside the mask's
+       box counts as unmasked -- i.e. hidden -- clipping exactly those bits
+       even though the gradient logic never intended to touch them. */
+    -webkit-mask-size: 100% 300%;
+    mask-size: 100% 300%;
+    -webkit-mask-position: center;
+    mask-position: center;
+    /* Keeps each line on its own composited layer instead of being
+       re-rasterized against the page each time its mask updates -- helps
+       the whole-pixel snapping in updateWordsReveal actually hold steady. */
+    will-change: mask-image;
+  }
+
+  .wordsCaption {
+    font-family: "Inter", "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    text-wrap: balance;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #bfbfbf;
+    text-align: left;
+    margin: 16px 0 0;
+  }
+
+  /* The mrbls wordmark, standing in for the plain text "mrbls" wherever it's
+     mentioned -- sized in em so it always tracks whatever font-size it's
+     dropped into (a 32pt wordLine, or this 14px caption) without a separate
+     class per context. `fill: currentColor` on the path (overriding its own
+     fill="white" attribute -- a presentation attribute, so it loses to any
+     real CSS rule targeting the same element) means it also just inherits
+     whatever text color surrounds it for free, in both the gray base copy
+     and the white reveal copy above it. Height is tuned by eye against the
+     surrounding cap-height, not derived from the SVG's own 234x69 box. */
+  .mrblsLogo {
+    display: inline-block;
+    height: 1.25em; /* was a fixed 40px, tuned against this group's 32px base size -- em keeps that same proportion as --wsScale shrinks it on narrower viewports */
+    width: auto;
+    vertical-align: middle;
+  }
+  .mrblsLogo path { fill: currentColor; }
+
+  /* ---- word section: OpenType feature demos ---- */
+  /* These trigger the font's own built-in alternate glyphs via CSS
+     font-feature-settings (or, for the slashed zero, the dedicated
+     font-variant-numeric property) rather than swapping in different
+     Unicode characters -- so they only actually change appearance once "JK
+     Roadium" is genuinely installed with these character-variant tables
+     built in; with any fallback font (as in a browser that doesn't have it)
+     this text just renders plain. Tag-to-feature mapping below is inferred
+     from the spec given (cv01=Simple A, cv02=Simple G, cv03=Simple N,
+     cv04=Checkered #) -- adjust the tags here if the actual font
+     implementation numbers them differently. */
+  .featureHero, .featureCell { text-align: left; }
+  .featureHero { margin-top: 24px; }
+  .featureDescription {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    color: #bfbfbf;
+  }
+  .featureSample {
+    margin: 8px 0 0;
+    font-family: 'JK Roadium', Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    font-size: calc(56px * var(--wsScale, 1));
+    line-height: 1.15;
+    color: #fff;
+  }
+  .featureHighlight { color: #FFC700; }
+
+  .featureGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px 24px;
+    margin-top: 40px;
+  }
+  @media (max-width: 600px) {
+    .featureGrid { grid-template-columns: 1fr; }
+  }
+
+  .featureAlt-cv01 { font-feature-settings: "cv01" 1; }
+  .featureAlt-cv02 { font-feature-settings: "cv02" 1; }
+  .featureAlt-cv03 { font-feature-settings: "cv03" 1; }
+  .featureAlt-cv04 { font-feature-settings: "cv04" 1; }
+  .featureAlt-zero { font-variant-numeric: slashed-zero; }
+
+  /* ---- glyph overview section ---- */
+  #glyphSection {
+    background: #000;
+    padding: 40px 30px;
+  }
+  @media (max-width: 600px) {
+    #glyphSection { padding: 28px 16px; }
+  }
+  .glyphTitle {
+    margin: 0 0 40px;
+    font-family: 'JK Roadium', Arial, Helvetica, sans-serif;
+    font-size: 48px;
+    line-height: 42px;
+    color: #fff;
+    text-align: left;
+  }
+  @media (max-width: 600px) {
+    .glyphTitle { margin: 0 0 24px; }
+  }
+
+  /* Shared "chrome" with .dividerPill above (border/background/shadow) --
+     kept as a separate rule rather than a shared class so the existing
+     divider markup doesn't need touching. */
+  .filterPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    color: #bfbfbf;
+    padding: 12px 12px 12px 12px;
+    border: none; /* buttons carry a UA default border that appearance:none alone doesn't clear */
+    border-radius: 999px;
+    background: #1A1A1E; /* same as .glyphBox */
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    /* Same press-feedback treatment as #gridPlayToggle: a quick scale down
+       on mousedown (see the .pressed class toggled in the script below),
+       eased back up on release. */
+    transform: scale(1);
+    transition: background-color 150ms ease, transform 150ms ease;
+  }
+  .filterPill.pressed { transform: scale(0.97); }
+  /* Same shape as .dividerDot; color is per-pill via inline style, so no
+     shared color rule here. */
+  .filterDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    transition: width 150ms ease, height 150ms ease;
+  }
+  .filterPill.selected .filterDot {
+    width: 12px;
+    height: 12px;
+  }
+  .filterRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 8px;
+    margin: 0 0 30px;
+  }
+  /* Only unselected pills get the hover swap -- the selected pill's white
+     fill doesn't need (and shouldn't get) a hover state of its own. Same
+     lighter gray as .glyphBox's hover. */
+  .filterPill:hover:not(.selected) {
+    background: #25252C;
+    color: #fff;
+  }
+  .filterPill.selected {
+    background: #fff;
+    color: #000;
+    padding: 12px 12px 12px 12px;
+  }
+
+  .glyphGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+  }
+  /* Fewer, taller-relative-to-width columns as the section narrows -- shrinking
+     7 columns' worth of glyph boxes all the way down to phone widths would
+     make both the glyph and its label unreadably small. */
+  @media (max-width: 900px) {
+    .glyphGrid { grid-template-columns: repeat(5, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .glyphGrid { grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .glyphBox { height: 100px; }
+    .glyphChar { font-size: 48px; }
+  }
+  @media (max-width: 420px) {
+    .glyphGrid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .glyphBox {
+    position: relative;
+    height: 130px;
+    background: #1A1A1E;
+    border-radius: 12px;
+    cursor: default; /* an explicit value, not auto -- keeps the arrow over the glyph/label text instead of an I-beam */
+    /* Lives on the base rule (not :hover) so it only applies on the way
+       back out: entering is instant, leaving eases over 1000ms. */
+    transition: background-color 1000ms ease;
+  }
+  .glyphBox:hover {
+    background: #25252C;
+    transition: none;
+  }
+  .glyphChar, .glyphLabel {
+    cursor: default;
+  }
+  .glyphChar {
+    position: absolute;
+    inset: 0 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JK Roadium', Arial, Helvetica, sans-serif;
+    font-size: 72px;
+    line-height: 1;
+    color: #fff;
+  }
+  .glyphLabel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    text-align: center;
+    font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 14px;
+    /* No text-transform: the glyph sets now include case-sensitive entries
+       (lowercase i vs. dotless ı) where forcing uppercase would show the
+       wrong letter in the label. */
+    color: #bfbfbf;
+  }
+
+  /* ---- download section ---- */
+  #downloadSection {
+    background: linear-gradient(to top, #4A4B58 0%, #0C0C0E 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Overlaps the tail end of #stage rather than following it: pulled up by
+     (stage height - 640px) so its top edge lands exactly 640px from the top
+     of the section, sitting over the fading shadow/rings but clear of the
+     model itself, instead of pushing the section taller. Also matters for
+     hit-testing: #stage is `position: relative`, so any part of its box past
+     #cursorZone's own auto-computed height would still paint (and capture
+     hover/click) above later siblings like the copy text, invisibly -- kept
+     stage's CSS height equal to exactly where its content ends (the shadow
+     image's bottom edge) so there's no such dead zone to begin with. */
+  #titleOverlay {
+    /* % of #downloadSection's own width -- top/bottom margin percentages
+       always resolve against the containing block's width (a CSS quirk, not
+       a typo), which happens to be exactly the basis this whole section
+       already scales against, so this tracks the design's 40px offset at
+       any size. */
+    margin-top: -4.167%; /* 40/960 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  /* aspect-ratio (960:680, the design canvas's own ratio) replaces the fixed
+     680px height so the stage -- and everything positioned against it below
+     -- scales as one unit with the section's fluid width. The WebGL canvas
+     itself keeps rendering at its native 960x680 buffer regardless (see
+     STAGE_W/STAGE_H in the script) and just gets displayed smaller, same as
+     any other image would. */
+  #stage {
+    width: 100%;
+    aspect-ratio: 960 / 680;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+  }
+  #ringsCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  /* Plain <img>, not a WebGL texture -- keeps this off the three.js/GPU
+     texture budget entirely and rides the browser's ordinary (and much
+     cheaper) image-compositing path instead. Source is a @2x asset
+     (1120px) for a crisp look on retina displays at this 560px CSS size.
+     top/width are that same 120px/560px placement expressed as % of #stage's
+     own 960x680 box (height:auto + aspect-ratio:1/1 keeps it square at any
+     size, rather than a % height which would compute against the wrong
+     axis). */
+  #shadowBlur {
+    position: absolute;
+    top: 17.647%; /* 120/680 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 58.333%; /* 560/960 */
+    aspect-ratio: 1 / 1;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* % of #stage's 960x680 box, same idea as #shadowBlur above -- but height
+     is its own explicit percentage (360/680) rather than aspect-ratio +
+     height:auto. The three.js canvas inside is given real width/height
+     attributes (renderer.setSize(360, 360), in the script below), and a
+     replaced element's intrinsic size like that can end up dictating an
+     ancestor's "auto" height instead of the aspect-ratio hint -- which is
+     exactly what happened here (this box was rendering at a fixed 360px
+     tall at every width until this was made explicit). Both percentages
+     land on the same actual px value at any size since #stage itself keeps
+     the 960:680 ratio, so this still renders as a true square. */
+  #canvasHost {
+    position: absolute;
+    top: 22.794%; /* 155/680 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 37.5%; /* 360/960 */
+    height: 52.941%; /* 360/680 */
+    pointer-events: none;
+  }
+  #canvasHost canvas { display: block; width: 100%; height: 100%; }
+
+  /* The color-change control isn't a fixed button any more -- it replaces
+     the system cursor while hovering #cursorZone (stage + title, not the
+     copy text below) and follows the pointer instead. Explicit width:100%
+     because, as a flex item of #downloadSection (align-items:center), it
+     would otherwise shrink-to-fit its content -- taking #stage's width:100%
+     down with it (621px, the SVG's width, instead of the full 960px card)
+     and squashing the WebGL canvas's circular rings into ovals. */
+  #cursorZone { cursor: none; width: 100%; }
+  /* The custom cursor is a hover/mousemove-driven affordance -- meaningless
+     on a touch device, which has neither. Fall back to the regular pointer
+     and hide the blob/icon entirely rather than have them appear stuck
+     wherever the last tap happened; the tap-to-cycle-color interaction
+     itself still works fine (a tap still fires 'click'). */
+  @media (hover: none), (pointer: coarse) {
+    #cursorZone { cursor: auto; }
+    #colorCursor, #colorCursorIcon { display: none !important; }
+  }
+
+  /* Two independently-positioned fixed elements sharing the same pointer:
+     #colorCursor (the blue button) lerps toward it with a bit of trailing
+     lag (see CURSOR_LERP_RATE in the script), while #colorCursorIcon tracks
+     it 1:1 with no lag at all, so the icon reads as "attached" to the actual
+     pointer and the button as a soft blob following behind it. */
+  #colorCursor, #colorCursorIcon {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+  #colorCursor { z-index: 9999; }
+  #colorCursorIcon { z-index: 10000; } /* above the button it's trailed by */
+
+  #colorCursorInner {
+    width: 68px;
+    height: 68px;
+    margin: -34px 0 0 -34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 6px 2px rgba(255, 255, 255, 0.05), inset 0 -1px 0px 0px rgba(255, 255, 255, 0.15), inset 0 1px 0px 0px rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    /* Same duration covers the enter/exit show-hide and the click-press
+       scale below -- both are meant to read as "quick". */
+    transition: transform 200ms ease;
+  }
+  /* .visible (hover state) and .pressed (mousedown state) stack: entering
+     the zone scales this up from 0, and a click scales it down further to
+     95% without interrupting or resetting the show/hide state. */
+  #colorCursor.visible #colorCursorInner { transform: scale(1); }
+  #colorCursor.visible.pressed #colorCursorInner { transform: scale(0.95); }
+
+  /* Scale (show/hide) lives on this wrapper; rotation (the click spin, a
+     different duration) lives on the svg itself -- one transform property
+     can't ease two different-duration changes at once. */
+  #colorCursorIconScale {
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    transform: scale(0);
+    transition: transform 200ms ease;
+  }
+  #colorCursorIcon.visible #colorCursorIconScale { transform: scale(1); }
+  #colorCursorIconScale svg {
+    width: 24px;
+    height: 24px;
+    /* Duration set from JS (KICK_SPIN_DURATION_MS) so the icon spin always
+       matches the model's kick-spin timing even if that constant changes. */
+  }
+
+  #versionTitle {
+    display: block;
+    width: 85%; /* wider than the model's own 621/960 proportion by design request */
+    max-width: 620px; /* ...but capped near its native 621px so it doesn't balloon past that on wide/desktop views */
+    aspect-ratio: 621 / 80;
+    height: auto;
+  }
+  /* Transitioning the `fill` presentation attribute via CSS -- deliberately
+     quicker than the 3D model's own COLOR_STEP_DURATION (500ms, in the
+     module script below) so the flat SVG accent settles into its new color
+     a beat ahead of the model's crossfade. */
+  #colorpart path {
+    transition: fill 250ms ease-in-out;
+  }
+
+  #downloadCopy {
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    /* Same contrast fix as .specLabel above -- see that comment. */
+    color: rgba(255, 255, 255, 0.65);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    margin: 0 0 64px 0;
+  }
+
+  .downloadSpecs {
+    display: flex;
+    gap: 53px;
+    margin: 48px 0 0;
+  }
+  .downloadSpecsCol {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 284px;
+  }
+  .downloadCtas {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 32px 0 48px 0;
+  }
+
+  /* Below the 2*284px-column + 53px-gap design width, stack the spec columns
+     instead of squeezing them -- and give the whole section a side gutter so
+     the now-narrower text content doesn't run edge-to-edge (the stage/canvas
+     above stay full-bleed at any width; only these text blocks need it). */
+  @media (max-width: 680px) {
+    #downloadSection { padding: 0 20px; }
+    .downloadSpecs { flex-direction: column; gap: 20px; width: 100%; max-width: 284px; }
+    .downloadSpecsCol { width: 100%; }
+  }
+
+  .eulaLink {
+    color: #fff;
+    text-decoration: underline dotted rgba(255, 255, 255, 0.55);
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+  .eulaLink:hover {
+    text-decoration-style: solid;
+    text-decoration-color: #fff;
+  }
+
+  /* ---- EULA modal ---- */
+  .modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    background: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+  .modalOverlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modalDialog {
+    display: flex;
+    flex-direction: column;
+    position: relative; /* containing block for the overlaid .modalHeader */
+    width: min(600px, 100%);
+    max-height: 100%;
+    background-color: #fff;
+    border-radius: 16px;
+    overflow: hidden; /* clips modalBody's corners to the dialog's own radius */
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    /* Entrance is on the dialog itself, not the overlay -- a quick
+       scale+fade reads as the sheet arriving, while the dimmed backdrop
+       just fades in behind it. */
+    transform: scale(0.97);
+    opacity: 0;
+    transition: transform 200ms ease, opacity 200ms ease;
+  }
+  .modalOverlay.open .modalDialog {
+    transform: scale(1);
+    opacity: 1;
+  }
+  /* Floats over the scrolling body (position:absolute) rather than sitting
+     in normal flow above it, so the body's content is visible scrolling
+     underneath through the translucent, blurred glass -- modalBody's own
+     padding-top (set from JS, measured off this element's real height) is
+     what keeps the first line of content starting clear of it instead of
+     hidden underneath at rest. */
+  .modalHeader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 24px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .modalHeader h2 {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: #000;
+  }
+  .modalBody {
+    overflow-y: auto;
+    /* Contains the trackpad/touch rubber-band bounce to this element
+       instead of letting it chain to the page behind -- combined with the
+       explicit background-color above (not just a shorthand background),
+       that's what keeps the bounce from ever flashing anything transparent. */
+    overscroll-behavior: contain;
+    background-color: #fff;
+    color: #444;
+    /* Top padding is a fixed offset clearing the floated .modalHeader,
+       rather than measured from its real height -- simpler, and close
+       enough given the header's content isn't expected to change size. */
+    padding: 100px 24px 88px;
+  }
+  .modalBody h3 {
+    margin: 28px 0 8px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: #000;
+  }
+  .modalBody p { margin: 0 0 12px; }
+  .modalBody ul { margin: 0 0 12px; padding-left: 20px; }
+  .modalBody li { margin: 0 0 6px; }
+  .modalClose {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    color: #000;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+  }
+  .modalClose:hover { background: rgba(0, 0, 0, 0.12); }
+
+  /* ---- footer ---- */
+  /* Same fluid-up-to-960px column, same space-between row layout as
+     .topNav -- copyright on the left, the font switcher (this one expands
+     upward, see .fontSwitcherUp above) on the right. */
+  .pageFooter {
+    width: 100%;
+    max-width: 960px;
+    margin: 20px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footerCopyright {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    color: #6E6E7E;
+  }
