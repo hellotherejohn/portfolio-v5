@@ -1,6 +1,6 @@
 @media (hover: none) {
   .shuffle-link {
-    pointer-events: auto; /* Disables hover interactions */
+    pointer-events: auto;
   }
 }
 
@@ -14,7 +14,6 @@
   color: #000;
 }
 
-/* LOCAL IMPORT */
 @font-face {
     font-family: 'JK Quarry Beta';
     src: url('assets/JKQuarryBeta-Regular.otf') format('opentype');
@@ -22,7 +21,19 @@
     font-style: normal;
 }
 
-/* GOOGLE FONTS IMPORT  */
+/* Shared with the Roadium showcase page -- points at its assets folder
+   rather than duplicating the font files here. */
+@font-face {
+    font-family: 'JK Roadium';
+    src: url('fonts/roadium/assets/JKRoadium-Bold.woff2') format('woff2'),
+         url('fonts/roadium/assets/JKRoadium-Bold.woff') format('woff'),
+         url('fonts/roadium/assets/JKRoadium-Bold.ttf') format('truetype'),
+         url('fonts/roadium/assets/JKRoadium-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 .inter-<uniquifier> {
 	font-family: "Inter", sans-serif;
 	font-optical-sizing: auto;
@@ -62,22 +73,18 @@ p {
 	font-size: 16px;
 	font-weight: 400;
 	margin: 0;
-	line-height: 24px; /* 141.176% */
+	line-height: 24px;
 	letter-spacing: -0.051px;
 	text-wrap: balance;
 }
 
 .container {
-	/* Referenced by .video-loop.expanded's max-width below so the expanded
-	   video respects whatever the page's own side padding actually is at
-	   the current breakpoint, instead of hardcoding it (or ignoring it via
-	   a plain 100vw) in a second place that could drift out of sync with
-	   this. Custom properties inherit down through .content into
-	   .video-loop regardless of nesting depth. */
+	/* Consumed by .video-loop.expanded's max-width below, so the expanded
+	   video respects the page's actual side padding at any breakpoint. */
 	--edge-padding: 64px;
 	display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Full viewport height */
+    min-height: 100vh;
 	padding: 64px var(--edge-padding) 32px var(--edge-padding);
 	box-sizing: border-box;
 	transition: padding 0.15s ease;
@@ -86,7 +93,7 @@ p {
 .content {
 	width: 100%;
 	max-width: 640px;
-	flex: 1; /* Pushes the footer down */
+	flex: 1;
 }
 
 @media (width <= 800px) {
@@ -94,7 +101,7 @@ p {
 		--edge-padding: 32px;
 		display: flex;
 	    flex-direction: column;
-	    min-height: 100vh; /* Full viewport height */
+	    min-height: 100vh;
 		padding: 32px;
 		box-sizing: border-box;
 		transition: padding 0.15s ease;
@@ -105,9 +112,8 @@ header {
 	margin: 32px 0 24px 0;
 }
 
-/* No max-width/responsive clamp here on purpose -- expanding to 960px is
-   meant to actually break out past .content's own 640px column, not be
-   capped to it. */
+/* No max-width/clamp here on purpose -- expanding to 960px breaks out past
+   .content's own 640px column. */
 .video-loop {
 	position: relative;
 	width: 360px;
@@ -115,23 +121,11 @@ header {
 	border-radius: 24px;
 	overflow: hidden;
 	cursor: pointer;
-	margin: 32px 0; /* collapses against header's own 24px margin-bottom above
-	                   and p's 0 margin-top below, landing on 32px both ways */
-	/* Only width/border-radius are ever explicitly set (360->960, 24->12) --
-	   aspect-ratio recomputes height every frame on its own, which is what
-	   makes this read as smoothly growing in place and pushing the content
-	   below it down as it goes, rather than several properties animating
-	   slightly out of step with each other. */
+	margin: 32px 0;
 	transition: width 550ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 550ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .video-loop.expanded {
 	width: 960px;
-	/* calc() against --edge-padding (set on .container), not a plain 100% --
-	   % alone would resolve against .content's own (640px-capped) width,
-	   defeating the whole point of breaking out past that column. This still
-	   breaks out past .content's column same as before, but now stops at the
-	   page's own actual side padding instead of running flush to the true
-	   viewport edge underneath it. */
 	max-width: calc(100vw - var(--edge-padding) * 2);
 	border-radius: 12px;
 	cursor: default;
@@ -148,7 +142,6 @@ header {
 	filter: blur(5px);
 }
 
-/* Dim + button both only show on hover -- the loop plays plain otherwise. */
 .video-dim {
 	position: absolute;
 	inset: 0;
@@ -166,15 +159,12 @@ header {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	z-index: 2; /* above .video-dim */
+	z-index: 2;
 	display: inline-flex;
 	align-items: center;
 	padding: 12px 18px;
 	border: none;
 	border-radius: 999px;
-	/* Same frosted-glass treatment as #gridPlayToggle on the Roadium page --
-	   the blur/inset-highlight is what actually gives it the glassy look;
-	   the flat background color alone read as just a plain gray chip. */
 	background: rgb(90 90 90 / 45%);
 	backdrop-filter: blur(15px);
 	-webkit-backdrop-filter: blur(15px);
@@ -187,8 +177,6 @@ header {
 	opacity: 0;
 	transform: translate(-50%, -50%) scale(0.8);
 	pointer-events: none;
-	/* The overshoot (y > 1) is what gives the reveal its bit of elasticity --
-	   snappy in (250ms) than it eases back out. */
 	transition: opacity 250ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .video-loop:hover .video-watch {
@@ -196,9 +184,6 @@ header {
 	transform: translate(-50%, -50%) scale(1);
 	pointer-events: auto;
 }
-/* Higher specificity than the hover rule above (adds .pressed), so the
-   press-down scale actually wins while the mouse is still down/hovering,
-   instead of the reveal's own scale(1) overriding it. */
 .video-loop:hover .video-watch.pressed {
 	transform: translate(-50%, -50%) scale(0.97);
 	transition: transform 120ms ease;
@@ -209,13 +194,48 @@ header {
 	display: none;
 }
 
-/* The Vimeo embed crossfades in on top of the still-playing (now blurred)
-   loop once the grow finishes, rather than an abrupt cut from one to the
-   other. Sized 1px oversized on every edge (rather than a plain inset:0)
-   so subpixel rounding during the width transition can never leave a
-   sliver of the container's own background peeking through at the rounded
-   corners -- the extra 1px bleed is simply clipped away by .video-loop's
-   own overflow:hidden either way. */
+/* Shown while expanded and blurred, before the Vimeo iframe has actually
+   loaded -- hidden again once .embed-ready lands (see main.js's iframe
+   'load' handler). */
+.video-loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding: 10px 14px;
+	border-radius: 999px;
+	background: #111;
+	transform: translate(-50%, -50%);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 200ms ease;
+}
+.video-loop.expanded .video-loading {
+	opacity: 1;
+}
+.video-loop.expanded.embed-ready .video-loading {
+	opacity: 0;
+}
+.video-loading span {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #fff;
+	animation: videoLoadingBounce 1.2s ease-in-out infinite;
+}
+.video-loading span:nth-child(2) { animation-delay: 0.15s; }
+.video-loading span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes videoLoadingBounce {
+	0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+	40% { transform: scale(1); opacity: 1; }
+}
+
+/* 1px oversized on every edge so subpixel rounding during the width
+   transition never leaves a gap at the rounded corners -- clipped by
+   .video-loop's own overflow:hidden either way. */
 .video-embed-wrap {
 	position: absolute;
 	top: -1px;
@@ -240,9 +260,6 @@ header {
 	display: block;
 }
 
-/* Inside the video, top-left, shown only on hover while expanded -- same
-   idea as Vimeo's own player controls only appearing on hover. z-index
-   above .video-embed-wrap since it has to stay clickable over the iframe. */
 .video-minimize {
 	position: absolute;
 	top: 16px;
@@ -255,9 +272,6 @@ header {
 	justify-content: center;
 	border: none;
 	border-radius: 50%;
-	/* Same darker fill as .video-watch (rather than the lighter frosted-glass
-	   white used elsewhere) so it stays visible over light/bright frames of
-	   the reel too, not just dark ones. */
 	background: rgb(90 90 90 / 45%);
 	backdrop-filter: blur(15px);
 	-webkit-backdrop-filter: blur(15px);
@@ -277,13 +291,6 @@ header {
 	pointer-events: auto;
 }
 
-/* Touch has no real hover state to reveal any of the three controls above
-   with, so all three (dim, "2025 Reel", and the minimize/close X) are just
-   always shown here instead of gated behind :hover. The dim comes along
-   with the reel button rather than being left off on its own -- it's what
-   the button was designed to sit on top of for contrast in the first
-   place. Minimize isn't gated by .expanded:hover:not(...) either -- it's
-   still only ever visible while .expanded regardless, same as before. */
 @media (hover: none), (pointer: coarse) {
 	.video-dim {
 		opacity: 1;
@@ -302,10 +309,13 @@ header {
 .logotype {
 	margin: -10px -10px -10px -12px;
 }
-/* LINKS */
 
 .links {
 	margin-top: 32px;
+	/* Wraps right after WORK/Fonts instead of also fitting Email on that
+	   first line; shrinks to fit on narrower viewports since this is a
+	   plain block, not a flex/grid item. */
+	max-width: 450px;
 }
 
 footer {
@@ -320,15 +330,17 @@ footer {
 	font-family: "JK Quarry Beta";
 	letter-spacing: 1px;
 	text-transform: uppercase;
-	font-size: 32px;
+	font-size: 24px;
 	text-decoration: none;
 	color: #404040;
 	display: inline-block;
 	transition: background-size 0.3s ease;
 	background: #EEEFF5;
-	padding: 20px;
+	padding: 16px;
 	border-radius: 12px;
 	margin: 12px 12px 0 0;
+	border: none;
+	outline: none;
 }
 
 .shuffle-link:hover {
@@ -339,7 +351,7 @@ footer {
 
 .shuffle-link span{
   display: inline-block;
-  transition: transform 0.15s ease;  
+  transition: transform 0.15s ease;
 }
 
 .inactive-link {
@@ -351,12 +363,12 @@ footer {
 	font-family: "JK Quarry Beta";
 	letter-spacing: 1px;
 	text-transform: uppercase;
-	font-size: 32px;
+	font-size: 24px;
 	text-decoration: none;
 	color: rgba(64, 64, 64, 0.33);
 	transition: background-size 0.3s ease;
 	background: #EEEFF5;
-	padding: 20px;
+	padding: 16px;
 	border-radius: 12px;
 	margin: 12px 12px 0 0;
 	cursor: not-allowed;
@@ -377,4 +389,75 @@ footer {
 	background: #fff;
 	border-radius: 12px;
 	margin: 0 0 0 16px;
+}
+
+/* Fonts pill: a plain .shuffle-link that fans a small stack of pills out
+   above it on click. .fontsMenu only needs position:relative -- the fan
+   is an absolutely-positioned overlay, so it has no size of its own to
+   affect the row's layout. Pills are generated in main.js from
+   FONT_ITEMS. */
+.fontsMenu {
+	position: relative;
+	display: inline-block;
+}
+.fontsFan {
+	position: absolute;
+	left: 50%;
+	bottom: 100%;
+	z-index: 20;
+	pointer-events: none;
+}
+/* Per-pill wrapper for the spawn/retract choreography (position, scale,
+   opacity), kept separate from .fanPill so that layer is free for the
+   continuous JS-driven hover motion. --home-x/--home-y/--home-rotate and
+   the stagger delay are set inline per pill from main.js. transform-origin
+   is bottom-center so --home-rotate reads as each pill tipping over from
+   its own base, like a fanned hand of cards. */
+.fanPillHome {
+	position: absolute;
+	left: 0;
+	top: 0;
+	transform-origin: 50% 100%;
+	transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(0.4);
+	opacity: 0;
+	pointer-events: none;
+	transition: transform 240ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 140ms ease;
+}
+.fontsMenu.open .fanPillHome {
+	transform: translate(-50%, -50%) translate(var(--home-x), var(--home-y)) rotate(var(--home-rotate, 0deg)) scale(1);
+	opacity: 1;
+	pointer-events: auto;
+	transition-delay: var(--stagger-delay, 0ms);
+}
+.fontsMenu:not(.open) .fanPillHome {
+	/* Retracting is quicker and unstaggered -- everything snaps back
+	   together rather than trickling back in the order it fanned out. */
+	transition-duration: 200ms, 140ms;
+}
+
+/* The actual pill, floating on top of .fanPillHome's position via a second,
+   nested transform. --spring-x/--spring-y/--pill-scale are written every
+   frame from main.js's spring simulation (never by a CSS transition). */
+.fanPill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
+	padding: 12px 18px;
+	border-radius: 999px;
+	background: #404040;
+	color: #fff;
+	font-family: "Inter", sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	cursor: pointer;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+	transform: translate(var(--spring-x, 0px), var(--spring-y, 0px)) scale(var(--pill-scale, 1));
+}
+/* "More soon..." -- a permanent, non-navigable placeholder (rendered as a
+   <span> in main.js, not an <a>). */
+.fanPill.disabled {
+	color: rgba(255, 255, 255, 0.45);
+	cursor: default;
 }
