@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
   const links = document.querySelectorAll('.shuffle-link');
+  // Touch fires a synthetic mouseenter on tap but never a reliable
+  // mouseleave afterward, so this hover-only effect stayed "stuck" shuffled
+  // until something else was tapped. Only wire it up on pointers that
+  // actually support hovering -- same reasoning as the CSS hover-invert
+  // right above it in the stylesheet.
+  const supportsHover = window.matchMedia('(hover: hover)').matches;
 
   links.forEach(link => {
     const text = link.textContent;
@@ -16,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         link.appendChild(span);
       }
     }
+
+    if (!supportsHover) return;
 
     function shuffleChars() {
       const chars = link.querySelectorAll('span');
@@ -195,21 +203,26 @@ document.addEventListener('DOMContentLoaded', () => {
       const springY = createSpring(POSITION_STIFFNESS, POSITION_DAMPING);
       const springScale = createEase(SCALE_EASE);
 
-      pill.addEventListener('mouseenter', () => {
-        springScale.target = 1.08;
-      });
-      pill.addEventListener('mousemove', (e) => {
-        const rect = pill.getBoundingClientRect();
-        const dx = (e.clientX - (rect.left + rect.width / 2)) * FOLLOW_STRENGTH;
-        const dy = (e.clientY - (rect.top + rect.height / 2)) * FOLLOW_STRENGTH;
-        springX.target = Math.max(-FOLLOW_MAX, Math.min(FOLLOW_MAX, dx));
-        springY.target = Math.max(-FOLLOW_MAX, Math.min(FOLLOW_MAX, dy));
-      });
-      pill.addEventListener('mouseleave', () => {
-        springX.target = 0;
-        springY.target = 0;
-        springScale.target = 1;
-      });
+      // Same reasoning as supportsHover above -- without this, tapping a
+      // pill on touch could leave it magnetically offset/scaled with no
+      // mouseleave ever arriving to reset it.
+      if (supportsHover) {
+        pill.addEventListener('mouseenter', () => {
+          springScale.target = 1.08;
+        });
+        pill.addEventListener('mousemove', (e) => {
+          const rect = pill.getBoundingClientRect();
+          const dx = (e.clientX - (rect.left + rect.width / 2)) * FOLLOW_STRENGTH;
+          const dy = (e.clientY - (rect.top + rect.height / 2)) * FOLLOW_STRENGTH;
+          springX.target = Math.max(-FOLLOW_MAX, Math.min(FOLLOW_MAX, dx));
+          springY.target = Math.max(-FOLLOW_MAX, Math.min(FOLLOW_MAX, dy));
+        });
+        pill.addEventListener('mouseleave', () => {
+          springX.target = 0;
+          springY.target = 0;
+          springScale.target = 1;
+        });
+      }
 
       return { home, pill, springX, springY, springScale };
     });
