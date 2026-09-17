@@ -1,9 +1,3 @@
-@media (hover: none) {
-  .shuffle-link {
-    pointer-events: auto;
-  }
-}
-
 ::-moz-selection {
   background: #FFBF00;
   color: #000;
@@ -112,11 +106,14 @@ header {
 	margin: 32px 0 24px 0;
 }
 
-/* No max-width/clamp here on purpose -- expanding to 960px breaks out past
-   .content's own 640px column. */
 .video-loop {
 	position: relative;
 	width: 360px;
+	/* Caps it to .content's own (already-padded) width on narrow screens --
+	   without this it stayed a fixed 360px and bled past the mobile
+	   margins on anything narrower than that. No cap needed the other way
+	   (see .expanded below, which breaks out past .content on purpose). */
+	max-width: 100%;
 	aspect-ratio: 360 / 202;
 	border-radius: 24px;
 	overflow: hidden;
@@ -290,6 +287,12 @@ header {
 	opacity: 1;
 	pointer-events: auto;
 }
+@media (width <= 800px) {
+	.video-minimize {
+		top: 8px;
+		right: 8px;
+	}
+}
 
 @media (hover: none), (pointer: coarse) {
 	.video-dim {
@@ -343,10 +346,15 @@ footer {
 	outline: none;
 }
 
-.shuffle-link:hover {
-  color: #fff;
-  background: #404040;
-  cursor: pointer;
+/* Gated to real hover-capable pointers only -- on touch, tapping a link
+   fires a synthetic hover that then has no mouseleave/pointerleave to end
+   it, so it stayed inverted until the next tap landed somewhere else. */
+@media (hover: hover) {
+  .shuffle-link:hover {
+    color: #fff;
+    background: #404040;
+    cursor: pointer;
+  }
 }
 
 .shuffle-link span{
